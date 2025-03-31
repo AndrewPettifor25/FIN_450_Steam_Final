@@ -1,0 +1,117 @@
+---
+title: "Steam Scrape Testing"
+author: "Andrew"
+format: html
+editor: visual
+---
+
+
+```{r}
+# Emergency Stop
+remDr$close()
+rD[["server"]]$stop()
+
+```
+
+```{r setup, include=FALSE}
+library(RSelenium)
+library(jsonlite)
+library(stringr)
+library(dplyr)
+library(lubridate)
+library(ggplot2)
+library(tidyr)
+library(tidyverse)
+```
+
+```{r}
+
+cases <- c(
+  "Chroma Case", "Chroma 2 Case", "Falchion Case"
+)
+
+casesfinal <- c(
+  "Chroma Case", "Chroma 2 Case", "Falchion Case", "Shadow Case",
+  "Revolver Case", "Operation Wildfire Case", "Chroma 3 Case",
+  "Gamma Case", "Gamma 2 Case", "Glove Case", "Spectrum Case",
+  "Operation Hydra Case", "Spectrum 2 Case", "Clutch Case", 
+  "Horizon Case", "Danger Zone Case", "Prisma Case", "CS20 Case", 
+  "Shattered Web Case", "Prisma 2 Case", "Fracture Case", 
+  "Operation Broken Fang Case", "Snakebite Case", 
+  "Operation Riptide Case", "Dreams & Nightmares Case", 
+  "Recoil Case", "Revolution Case", "Kilowatt Case", "Gallery Case"
+  
+)
+
+
+```
+
+
+```{r}
+
+scrape_case_chart_data <- function(case_name, remDr, wait_time = 6) {
+  encoded_case <- URLencode(case_name)
+  url <- paste0("https://steamcommunity.com/market/listings/730/", encoded_case)
+
+  remDr$navigate(url)
+  Sys.sleep(wait_time)
+
+  html <- remDr$getPageSource()[[1]]
+  html_clean <- gsub("[\r\n\t]", "", html)
+
+  pattern <- "var line1=\\[(\\[.*?\\])\\];"
+  matches <- stringr::str_match(html_clean, pattern)
+
+  if (is.na(matches[2])) {
+    message(paste("❌ Could not extract line1 for:", case_name))
+    return(NULL)
+  }
+
+  json_array <- paste0("[", matches[2], "]")
+
+  chart_data <- tryCatch({
+    fromJSON(json_array)
+  }, error = function(e) {
+    message(paste("❌ JSON parse error for", case_name, ":", e$message))
+    return(NULL)
+  })
+
+  num_cols <- ncol(chart_data)
+
+  df <- tibble(
+    time = chart_data[, 1],
+    price_usd = as.numeric(chart_data[, 2]),
+    volume = if (num_cols >= 3) as.numeric(chart_data[, 3]) else NA_real_
+  ) %>%
+    mutate(
+      time_clean = str_remove(time, " \\+0$"),
+      date = parse_date_time(time_clean, orders = "b d Y H", tz = "UTC"),
+      Case = case_name
+    ) %>%
+    select(Case, date, price_usd, volume) %>%
+    filter(!is.na(date))
+
+  return(df)
+}
+
+
+
+
+```
+
+
+```{r}
+# Start 
+rD <- rsDriver(browser = "firefox", chromever = NULL, verbose = FALSE)
+remDr <- rD$client
+
+
+# Scrape 
+all_data <- purrr::map_dfr(cases, ~ scrape_case_chart_data(.x, remDr))
+
+# Stop  
+remDr$close()
+rD$server$stop()
+
+
+```
