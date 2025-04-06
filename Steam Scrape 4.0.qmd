@@ -1,20 +1,16 @@
 ---
-title: "Steam Scrape Continued"
+title: "Steam Scrape Testing"
 author: "Andrew"
-format: 
-  html:
-    embed-resources: true
-    theme: flatly
-    code-fold: true
-    toc: true
-    toc-depth: 2
+format: html
 editor: visual
-execute:
-  echo: true
-  freeze: false
-server: 
-  shiny: true
 ---
+
+```{r}
+# Emergency Stop
+remDr$close()
+rD[["server"]]$stop()
+
+```
 
 ```{r setup, include=FALSE}
 library(RSelenium)
@@ -26,8 +22,6 @@ library(ggplot2)
 library(tidyr)
 library(tidyverse)
 library(tidyquant)
-library(shiny)
-library(ggplot2)
 ```
 
 ```{r}
@@ -209,3 +203,5 @@ Month_CAD <- CAD_Selected %>%
   ungroup()
 
 ```
+
+# Visualizations
