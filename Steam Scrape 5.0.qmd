@@ -77,7 +77,7 @@ casesfinal <- c(
 ```
 
 ```{r}
-
+# Function to scrape case data (your original function)
 scrape_case_chart_data <- function(case_name, remDr, wait_time = 6) {
   encoded_case <- URLencode(case_name)
   url <- paste0("https://steamcommunity.com/market/listings/730/", encoded_case)
@@ -115,68 +115,133 @@ scrape_case_chart_data <- function(case_name, remDr, wait_time = 6) {
     mutate(
       time_clean = str_remove(time, " \\+0$"),
       date = parse_date_time(time_clean, orders = "b d Y H", tz = "UTC"),
-      Case = case_name
+      Case = case_name,
+      Item_Type = "Case"
     ) %>%
-    select(Case, date, price_usd, volume) %>%
+    select(Case, Item_Type, date, price_usd, volume) %>%
+    filter(!is.na(date))
+
+  return(df)
+}
+```
+
+```{r}
+# Function to scrape skin data
+scrape_skin_chart_data <- function(skin_name, remDr, wait_time = 6) {
+  encoded_skin <- URLencode(skin_name)
+  url <- paste0("https://steamcommunity.com/market/listings/730/", encoded_skin)
+
+  remDr$navigate(url)
+  Sys.sleep(wait_time)
+
+  html <- remDr$getPageSource()[[1]]
+  html_clean <- gsub("[\r\n\t]", "", html)
+
+  pattern <- "var line1=\\[(\\[.*?\\])\\];"
+  matches <- stringr::str_match(html_clean, pattern)
+
+  if (is.na(matches[2])) {
+    message(paste("❌ Could not extract line1 for:", skin_name))
+    return(NULL)
+  }
+
+  json_array <- paste0("[", matches[2], "]")
+
+  chart_data <- tryCatch({
+    fromJSON(json_array)
+  }, error = function(e) {
+    message(paste("❌ JSON parse error for", skin_name, ":", e$message))
+    return(NULL)
+  })
+
+  num_cols <- ncol(chart_data)
+
+  df <- tibble(
+    time = chart_data[, 1],
+    price_usd = as.numeric(chart_data[, 2]),
+    volume = if (num_cols >= 3) as.numeric(chart_data[, 3]) else NA_real_
+  ) %>%
+    mutate(
+      time_clean = str_remove(time, " \\+0$"),
+      date = parse_date_time(time_clean, orders = "b d Y H", tz = "UTC"),
+      Skin = skin_name,
+      # Extract the case name from which this skin belongs
+      Case = names(case_skins)[sapply(case_skins, function(x) skin_name %in% x)],
+      Item_Type = "Skin"
+    ) %>%
+    select(Case, Skin, Item_Type, date, price_usd, volume) %>%
     filter(!is.na(date))
 
   return(df)
 }
 
-
-
-
 ```
 
 ```{r}
-# Start 
+# Flatten the case_skins list to get all skin names
+all_skins <- unlist(case_skins)
+
+# Start the RSelenium server
 rD <- rsDriver(browser = "firefox", chromever = NULL, verbose = FALSE)
 remDr <- rD$client
 
+# 1. First scrape all cases
+message("Starting case scraping...")
+all_cases_data <- purrr::map_dfr(cases, ~ scrape_case_chart_data(.x, remDr))
+message(paste("Completed scraping", length(cases), "cases"))
 
-# Scrape 
-all_data <- purrr::map_dfr(cases, ~ scrape_case_chart_data(.x, remDr))
+# 2. Then scrape all skins
+message("Starting skin scraping...")
+all_skins_data <- purrr::map_dfr(all_skins, ~ scrape_skin_chart_data(.x, remDr))
+message(paste("Completed scraping", length(all_skins), "skins"))
 
-# Stop  
+# Stop RSelenium
 remDr$close()
 rD$server$stop()
-
-
 ```
 
-# Data Refining
-
-## Daily History
 
 ```{r}
-all_data_clean <- all_data %>% 
+# Combine the case and skin data
+# Note: We need to modify the skin data to match the structure before combining
+all_skins_data_for_combine <- all_skins_data %>%
+  rename(Item = Skin) %>%
+  select(Case, Item, Item_Type, date, price_usd, volume)
+
+all_cases_data_for_combine <- all_cases_data %>%
+  mutate(Item = Case) %>%
+  select(Case, Item, Item_Type, date, price_usd, volume)
+
+# Combine both datasets
+all_items_data <- bind_rows(all_cases_data_for_combine, all_skins_data_for_combine)
+
+# Data Refining for all items
+all_items_data_clean <- all_items_data %>% 
   mutate(date = as.POSIXct(date, tz = "UTC"))
 
-daily_closes <- all_data_clean %>%
+# Daily history for all items
+daily_item_closes <- all_items_data_clean %>%
   mutate(
     hour = hour(date),
     day = as.Date(date)
   ) %>%
   filter(hour == 1) %>%  # Keep only rows with time == 1:00
-  group_by(Case, day) %>%  # In case multiple entries at 1:00, just in case
+  group_by(Case, Item, Item_Type, day) %>%  # In case multiple entries at 1:00
   slice_max(order_by = date, n = 1) %>%
   ungroup() %>%
-  select(Case, date, price_usd, volume) %>%
-  arrange(Case, date)
-```
+  select(Case, Item, Item_Type, date, price_usd, volume) %>%
+  arrange(Case, Item, date)
 
-## Past Month Data
-
-```{r}
-past_month <- all_data_clean %>%
+# Past month data for all items
+past_month_items <- all_items_data_clean %>%
   filter(date >= Sys.Date() - months(1)) %>%
-  group_by(Case) %>%
+  group_by(Case, Item, Item_Type) %>%
   arrange(date) %>%
   slice(-1) %>%  # removes the first row of each group
   ungroup()
-```
 
-Exchange Rates TidyQuant Ticker: "CAD=X"
+#Exchange Rates TidyQuant Ticker: "CAD=X"
+```
 
 ```{r}
 fx_usdcad <- tq_get("CAD=X", get = "stock.prices", from = "2010-01-01")
@@ -190,48 +255,68 @@ fx_usdcad_filled <- fx_usdcad_clean %>%
 
 ```
 
-Join all_data and create a new DF
-
 ```{r}
-CAD_Converted <- all_data_clean %>%
+# Convert to CAD
+CAD_Converted_Items <- all_items_data_clean %>%
   mutate(date_only = as.Date(date)) %>%
   left_join(fx_usdcad_filled, by = c("date_only" = "date")) %>%
   mutate(price_cad = price_usd * fx_rate) %>% 
   drop_na()
 
-CAD_Selected <- CAD_Converted %>% 
-  select(Case, date, price_cad, volume)
-
-
+CAD_Selected_Items <- CAD_Converted_Items %>% 
+  select(Case, Item, Item_Type, date, price_cad, volume)
 ```
 
-## Daily History (CAD)
-
 ```{r}
-Daily_CAD <- CAD_Selected %>%
+# Daily history (CAD) for all items
+Daily_CAD_Items <- CAD_Selected_Items %>%
   mutate(
     hour = hour(date),
     day = as.Date(date)
   ) %>%
   filter(hour == 1) %>%  # Keep only rows with time == 1:00
-  group_by(Case, day) %>%  # In case multiple entries at 1:00, just in case
+  group_by(Case, Item, Item_Type, day) %>%  # In case multiple entries at 1:00
   slice_max(order_by = date, n = 1) %>%
   ungroup() %>%
-  select(Case, date, price_cad, volume) %>%
-  arrange(Case, date)
-
+  select(Case, Item, Item_Type, date, price_cad, volume) %>%
+  arrange(Case, Item, date)
 ```
 
-## Past Month Data(CAD)
 
 ```{r}
-Month_CAD <- CAD_Selected %>%
+
+# Past month data (CAD) for all items
+Month_CAD_Items <- CAD_Selected_Items %>%
   filter(date >= Sys.Date() - months(1)) %>%
-  group_by(Case) %>%
+  group_by(Case, Item, Item_Type) %>%
   arrange(date) %>%
   slice(-1) %>%  # removes the first row of each group
   ungroup()
-
 ```
 
-# Visualizations
+```{r}
+# Example visualization code - comparing cases and their skins
+# For each case in case_skins, plot the case price and its skin prices
+plot_case_and_skins <- function(case_name) {
+  case_data <- Month_CAD_Items %>% 
+    filter(Case == case_name)
+  
+  ggplot(case_data, aes(x = date, y = price_cad, color = Item, linetype = Item_Type)) +
+    geom_line() +
+    labs(title = paste("Price Comparison:", case_name, "and its Skins (CAD)"),
+         x = "Date",
+         y = "Price (CAD)") +
+    theme_minimal() +
+    theme(legend.position = "right")
+}
+```
+
+```{r}
+# Save separate dataframes for cases and skins
+cases_data <- all_items_data_clean %>% filter(Item_Type == "Case")
+skins_data <- all_items_data_clean %>% filter(Item_Type == "Skin")
+
+# Write a function to run the plots for each case in case_skins
+case_plots <- lapply(names(case_skins), plot_case_and_skins)
+
+```
