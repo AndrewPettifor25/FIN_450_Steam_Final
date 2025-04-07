@@ -77,13 +77,23 @@ casesfinal <- c(
 ```
 
 ```{r}
-# Function to scrape case data (your original function)
-scrape_case_chart_data <- function(case_name, remDr, wait_time = 6) {
+# Add a random delay function
+random_delay <- function(min_seconds = 10, max_seconds = 30) {
+  delay_time <- runif(1, min_seconds, max_seconds)
+  message(paste("Waiting for", round(delay_time, 1), "seconds..."))
+  Sys.sleep(delay_time)
+}
+
+# Updated function to scrape case data with random delay
+scrape_case_chart_data <- function(case_name, remDr, min_wait = 10, max_wait = 30) {
   encoded_case <- URLencode(case_name)
   url <- paste0("https://steamcommunity.com/market/listings/730/", encoded_case)
 
+  message(paste("Scraping case:", case_name))
   remDr$navigate(url)
-  Sys.sleep(wait_time)
+  
+  # Apply random delay
+  random_delay(min_wait, max_wait)
 
   html <- remDr$getPageSource()[[1]]
   html_clean <- gsub("[\r\n\t]", "", html)
@@ -120,19 +130,21 @@ scrape_case_chart_data <- function(case_name, remDr, wait_time = 6) {
     ) %>%
     select(Case, Item_Type, date, price_usd, volume) %>%
     filter(!is.na(date))
-
+  
+  message(paste("✓ Successfully scraped data for:", case_name, "with", nrow(df), "data points"))
   return(df)
 }
-```
 
-```{r}
-# Function to scrape skin data
-scrape_skin_chart_data <- function(skin_name, remDr, wait_time = 6) {
+# Updated function to scrape skin data with random delay
+scrape_skin_chart_data <- function(skin_name, remDr, min_wait = 10, max_wait = 30) {
   encoded_skin <- URLencode(skin_name)
   url <- paste0("https://steamcommunity.com/market/listings/730/", encoded_skin)
 
+  message(paste("Scraping skin:", skin_name))
   remDr$navigate(url)
-  Sys.sleep(wait_time)
+  
+  # Apply random delay
+  random_delay(min_wait, max_wait)
 
   html <- remDr$getPageSource()[[1]]
   html_clean <- gsub("[\r\n\t]", "", html)
@@ -171,13 +183,12 @@ scrape_skin_chart_data <- function(skin_name, remDr, wait_time = 6) {
     ) %>%
     select(Case, Skin, Item_Type, date, price_usd, volume) %>%
     filter(!is.na(date))
-
+  
+  message(paste("✓ Successfully scraped data for:", skin_name, "with", nrow(df), "data points"))
   return(df)
 }
 
-```
-
-```{r}
+# Updated main scraping code with longer delays between items
 # Flatten the case_skins list to get all skin names
 all_skins <- unlist(case_skins)
 
@@ -187,13 +198,31 @@ remDr <- rD$client
 
 # 1. First scrape all cases
 message("Starting case scraping...")
-all_cases_data <- purrr::map_dfr(cases, ~ scrape_case_chart_data(.x, remDr))
-message(paste("Completed scraping", length(cases), "cases"))
+all_cases_data <- list()
+for (case_name in cases) {
+  case_data <- scrape_case_chart_data(case_name, remDr)
+  if (!is.null(case_data)) {
+    all_cases_data[[length(all_cases_data) + 1]] <- case_data
+  }
+  # Add extra delay between items
+  random_delay(15, 40)
+}
+all_cases_data <- bind_rows(all_cases_data)
+message(paste("Completed scraping cases"))
 
 # 2. Then scrape all skins
 message("Starting skin scraping...")
-all_skins_data <- purrr::map_dfr(all_skins, ~ scrape_skin_chart_data(.x, remDr))
-message(paste("Completed scraping", length(all_skins), "skins"))
+all_skins_data <- list()
+for (skin_name in all_skins) {
+  skin_data <- scrape_skin_chart_data(skin_name, remDr)
+  if (!is.null(skin_data)) {
+    all_skins_data[[length(all_skins_data) + 1]] <- skin_data
+  }
+  # Add extra delay between items
+  random_delay(15, 40)
+}
+all_skins_data <- bind_rows(all_skins_data)
+message(paste("Completed scraping skins"))
 
 # Stop RSelenium
 remDr$close()
