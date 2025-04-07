@@ -5,13 +5,6 @@ format: html
 editor: visual
 ---
 
-```{r}
-# Emergency Stop
-remDr$close()
-rD[["server"]]$stop()
-
-```
-
 ```{r setup, include=FALSE}
 library(RSelenium)
 library(jsonlite)
@@ -205,3 +198,5 @@ Month_CAD <- CAD_Selected %>%
 ```
 
 # Visualizations
+
+

@@ -6,13 +6,6 @@ editor: visual
 ---
 
 
-```{r}
-# Emergency Stop
-remDr$close()
-rD[["server"]]$stop()
-
-```
-
 ```{r setup, include=FALSE}
 library(RSelenium)
 library(jsonlite)
@@ -45,7 +38,6 @@ casesfinal <- c(
 
 
 ```
-
 
 ```{r}
 
@@ -98,7 +90,6 @@ scrape_case_chart_data <- function(case_name, remDr, wait_time = 6) {
 
 
 ```
-
 
 ```{r}
 # Start 
