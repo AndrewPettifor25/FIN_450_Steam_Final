@@ -1,9 +1,10 @@
 ---
-title: "Steam Scrape Testing"
+title: "Steam CSV Work"
 author: "Andrew"
 format: html
 editor: visual
 ---
+
 
 ```{r setup, include=FALSE}
 library(RSelenium)
@@ -70,156 +71,14 @@ casesfinal <- c(
 ```
 
 ```{r}
-# Add a random delay function
-random_delay <- function(min_seconds = 10, max_seconds = 30) {
-  delay_time <- runif(1, min_seconds, max_seconds)
-  message(paste("Waiting for", round(delay_time, 1), "seconds..."))
-  Sys.sleep(delay_time)
-}
+library(readr)
 
-# Updated function to scrape case data with random delay
-scrape_case_chart_data <- function(case_name, remDr, min_wait = 10, max_wait = 30) {
-  encoded_case <- URLencode(case_name)
-  url <- paste0("https://steamcommunity.com/market/listings/730/", encoded_case)
+url_skins <- "https://raw.githubusercontent.com/AndrewPettifor25/FIN_450_Steam_Final/refs/heads/main/steam_skins_raw.csv?token=GHSAT0AAAAAAC76LQ4MJRCAELCMZQHGZUFKZ7UNG6A"
+steam_skins_raw <- read_csv(url_skins)
 
-  message(paste("Scraping case:", case_name))
-  remDr$navigate(url)
-  
-  # Apply random delay
-  random_delay(min_wait, max_wait)
+url_cases <- "https://raw.githubusercontent.com/AndrewPettifor25/FIN_450_Steam_Final/refs/heads/main/steam_cases_raw.csv?token=GHSAT0AAAAAAC76LQ4N7GRPMWMTF5Q6EANYZ7UNJNA"
+steam_cases_raw <- read_csv(url_cases)
 
-  html <- remDr$getPageSource()[[1]]
-  html_clean <- gsub("[\r\n\t]", "", html)
-
-  pattern <- "var line1=\\[(\\[.*?\\])\\];"
-  matches <- stringr::str_match(html_clean, pattern)
-
-  if (is.na(matches[2])) {
-    message(paste("❌ Could not extract line1 for:", case_name))
-    return(NULL)
-  }
-
-  json_array <- paste0("[", matches[2], "]")
-
-  chart_data <- tryCatch({
-    fromJSON(json_array)
-  }, error = function(e) {
-    message(paste("❌ JSON parse error for", case_name, ":", e$message))
-    return(NULL)
-  })
-
-  num_cols <- ncol(chart_data)
-
-  df <- tibble(
-    time = chart_data[, 1],
-    price_usd = as.numeric(chart_data[, 2]),
-    volume = if (num_cols >= 3) as.numeric(chart_data[, 3]) else NA_real_
-  ) %>%
-    mutate(
-      time_clean = str_remove(time, " \\+0$"),
-      date = parse_date_time(time_clean, orders = "b d Y H", tz = "UTC"),
-      Case = case_name,
-      Item_Type = "Case"
-    ) %>%
-    select(Case, Item_Type, date, price_usd, volume) %>%
-    filter(!is.na(date))
-  
-  message(paste("✓ Successfully scraped data for:", case_name, "with", nrow(df), "data points"))
-  return(df)
-}
-
-# Updated function to scrape skin data with random delay
-scrape_skin_chart_data <- function(skin_name, remDr, min_wait = 10, max_wait = 30) {
-  encoded_skin <- URLencode(skin_name)
-  url <- paste0("https://steamcommunity.com/market/listings/730/", encoded_skin)
-
-  message(paste("Scraping skin:", skin_name))
-  remDr$navigate(url)
-  
-  # Apply random delay
-  random_delay(min_wait, max_wait)
-
-  html <- remDr$getPageSource()[[1]]
-  html_clean <- gsub("[\r\n\t]", "", html)
-
-  pattern <- "var line1=\\[(\\[.*?\\])\\];"
-  matches <- stringr::str_match(html_clean, pattern)
-
-  if (is.na(matches[2])) {
-    message(paste("❌ Could not extract line1 for:", skin_name))
-    return(NULL)
-  }
-
-  json_array <- paste0("[", matches[2], "]")
-
-  chart_data <- tryCatch({
-    fromJSON(json_array)
-  }, error = function(e) {
-    message(paste("❌ JSON parse error for", skin_name, ":", e$message))
-    return(NULL)
-  })
-
-  num_cols <- ncol(chart_data)
-
-  df <- tibble(
-    time = chart_data[, 1],
-    price_usd = as.numeric(chart_data[, 2]),
-    volume = if (num_cols >= 3) as.numeric(chart_data[, 3]) else NA_real_
-  ) %>%
-    mutate(
-      time_clean = str_remove(time, " \\+0$"),
-      date = parse_date_time(time_clean, orders = "b d Y H", tz = "UTC"),
-      Skin = skin_name,
-      # Extract the case name from which this skin belongs
-      Case = names(case_skins)[sapply(case_skins, function(x) skin_name %in% x)],
-      Item_Type = "Skin"
-    ) %>%
-    select(Case, Skin, Item_Type, date, price_usd, volume) %>%
-    filter(!is.na(date))
-  
-  message(paste("✓ Successfully scraped data for:", skin_name, "with", nrow(df), "data points"))
-  return(df)
-}
-
-# Updated main scraping code with longer delays between items
-# Flatten the case_skins list to get all skin names
-all_skins <- unlist(case_skins)
-
-# Start the RSelenium server
-rD <- rsDriver(browser = "firefox", chromever = NULL, verbose = FALSE)
-remDr <- rD$client
-
-# 1. First scrape all cases
-message("Starting case scraping...")
-all_cases_data <- list()
-for (case_name in cases) {
-  case_data <- scrape_case_chart_data(case_name, remDr)
-  if (!is.null(case_data)) {
-    all_cases_data[[length(all_cases_data) + 1]] <- case_data
-  }
-  # Add extra delay between items
-  random_delay(15, 40)
-}
-all_cases_data <- bind_rows(all_cases_data)
-message(paste("Completed scraping cases"))
-
-# 2. Then scrape all skins
-message("Starting skin scraping...")
-all_skins_data <- list()
-for (skin_name in all_skins) {
-  skin_data <- scrape_skin_chart_data(skin_name, remDr)
-  if (!is.null(skin_data)) {
-    all_skins_data[[length(all_skins_data) + 1]] <- skin_data
-  }
-  # Add extra delay between items
-  random_delay(15, 40)
-}
-all_skins_data <- bind_rows(all_skins_data)
-message(paste("Completed scraping skins"))
-
-# Stop RSelenium
-remDr$close()
-rD$server$stop()
 ```
 
 ```{r}
@@ -341,19 +200,4 @@ case_plots <- lapply(names(case_skins), plot_case_and_skins)
 
 ```
 
-```{r}
 
-# Save the raw scraped data
-readr::write_csv(all_cases_data, "steam_cases_raw.csv")
-readr::write_csv(all_skins_data, "steam_skins_raw.csv")
-
-readr::write_csv(all_items_data_clean, "steam_items_clean.csv")
-readr::write_csv(CAD_Selected_Items, "steam_items_cad.csv")
-readr::write_csv(Daily_CAD_Items, "steam_items_daily_cad.csv")
-readr::write_csv(Month_CAD_Items, "steam_items_month_cad.csv")
-
-
-
-
-
-```
