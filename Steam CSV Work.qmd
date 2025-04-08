@@ -24,6 +24,22 @@ library(tidymodels)
 library(slider)
 ```
 
+Layout Summary:
+
+1. What is CS2
+2. Why is CS2 Still booming
+3. What are Cases and what are skins?
+4. How do we define and measure the value of a skin
+5. Examining Cases and Skins as an investment. 
+6. What are the relations between skins and cases? 
+7. Can we predict the future prices of skins.
+8. What can we take away from this. 
+
+
+
+
+
+
 ```{r echo=FALSE}
 
 cases <- c(
