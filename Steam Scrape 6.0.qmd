@@ -20,46 +20,38 @@ library(tidyquant)
 ```{r}
 
 cases <- c(
-  "Chroma Case", "Chroma 2 Case", "Gamma Case","Glove Case","Dreams & Nightmares Case", "Recoil Case","Prisma 2 Case"
+  "Chroma Case", "Chroma 2 Case", "Gamma Case","Glove Case","Dreams & Nightmares Case"
 )
 
 case_skins <- list(
   "Chroma Case" = c(
-    "AK-47 | Cartel (Minimal Wear)",
-    "M4A4 | Dragon King (Minimal Wear)",
-    "AWP | Man-o'-war (Minimal Wear)"
+    "Glock-18 | Catacombs (Minimal Wear)",           # pistol
+    "AK-47 | Cartel (Minimal Wear)",                 # rifle
+    "AWP | Man-o'-war (Minimal Wear)"                # AWP
   ),
   "Chroma 2 Case" = c(
-    "Five-SeveN | Monkey Business (Minimal Wear)",
-    "AWP | Worm God (Minimal Wear)",
-    "Galil AR | Eco (Minimal Wear)"
+    "USP-S | Torque (Minimal Wear)",                 # pistol
+    "M4A1-S | Hyper Beast (Minimal Wear)",           # rifle
+    "AWP | Worm God (Minimal Wear)"                  # AWP
   ),
   "Gamma Case" = c(
-    "M4A4 | Desolate Space (Minimal Wear)",
-    "Glock-18 | Wasteland Rebel (Minimal Wear)",
-    "AUG | Aristocrat (Minimal Wear)"
+    "Glock-18 | Wasteland Rebel (Minimal Wear)",     # pistol
+    "M4A4 | Desolate Space (Minimal Wear)",          # rifle
+    "AWP | Phobos (Minimal Wear)"                    # AWP-preferred random
   ),
   "Glove Case" = c(
-    "MP7 | Cirrus (Minimal Wear)",
-    "P2000 | Turf (Minimal Wear)",
-    "M4A1-S | Flashback (Minimal Wear)"
+    "USP-S | Cyrex (Minimal Wear)",                  # pistol
+    "M4A4 | Buzz Kill (Minimal Wear)",               # rifle
+    "P90 | Shallow Grave (Minimal Wear)"             # random
   ),
   "Dreams & Nightmares Case" = c(
-    "MP5-SD | Necro Jr. (Minimal Wear)",
-    "AK-47 | Nightwish (Minimal Wear)",
-    "USP-S | Ticket to Hell (Minimal Wear)"
-  ),
-  "Recoil Case" = c(
-    "FAMAS | Meow 36 (Minimal Wear)",
-    "AK-47 | Ice Coaled (Minimal Wear)",
-    "AWP | Chromatic Aberration (Minimal Wear)"
-  ),
-  "Prisma 2 Case" = c(
-    "AK-47 | Phantom Disruptor (Minimal Wear)",
-    "Desert Eagle | Blue Ply (Minimal Wear)",
-    "M4A1-S | Player Two (Minimal Wear)"
+    "USP-S | Ticket to Hell (Minimal Wear)",         # pistol
+    "AK-47 | Nightwish (Minimal Wear)",              # rifle
+    "MP9 | Starlight Protector (Minimal Wear)"       # random
   )
 )
+
+# Optinal Additional Cases
 casesfinal <- c(
   "Chroma Case", "Chroma 2 Case", "Falchion Case", "Shadow Case",
   "Revolver Case", "Operation Wildfire Case", "Chroma 3 Case",
@@ -345,5 +337,22 @@ skins_data <- all_items_data_clean %>% filter(Item_Type == "Skin")
 
 # Write a function to run the plots for each case in case_skins
 case_plots <- lapply(names(case_skins), plot_case_and_skins)
+
+```
+
+```{r}
+
+# Save the raw scraped data
+readr::write_csv(all_cases_data, "steam_cases_raw.csv")
+readr::write_csv(all_skins_data, "steam_skins_raw.csv")
+
+readr::write_csv(all_items_data_clean, "steam_items_clean.csv")
+readr::write_csv(CAD_Selected_Items, "steam_items_cad.csv")
+readr::write_csv(Daily_CAD_Items, "steam_items_daily_cad.csv")
+readr::write_csv(Month_CAD_Items, "steam_items_month_cad.csv")
+
+
+
+
 
 ```
