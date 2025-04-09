@@ -22,6 +22,7 @@ library(recipes)
 library(parsnip)
 library(tidymodels)
 library(slider)
+library(rvest)
 ```
 
 Layout Summary:
@@ -192,6 +193,40 @@ skins_data <- all_items_data_clean %>% filter(Item_Type == "Skin")
 
 ```
 
+
+# Steam Player Count
+```{r}
+library(rvest)
+
+scrape_steamcharts <- function() {
+  url <- "https://steamcharts.com/app/730"
+    page <- read_html(url)
+  steam_data <- page %>%
+    html_element("table.common-table") %>%
+    html_table()
+  
+  return(steam_data)
+}
+
+steam_data <- scrape_steamcharts()
+
+
+steam_data %>% gt() %>%
+  tab_header(
+    title = "Steam Player Statistics",
+    subtitle = "Monthly Peak Player Data"
+  ) %>%
+  fmt_number(
+    columns = c(`Peak Players`, Gain, `Avg. Players`),
+    decimals = 0,
+    use_seps = TRUE
+  ) %>%
+  tab_options(
+    table.border.top.width = px(2),
+    table.border.bottom.width = px(2),
+    table.font.size = px(14)
+  )
+```
 # Visualizations
 
 ## Cases

@@ -1,0 +1,171 @@
+---
+title: "Ultra Simple"
+author: "Andrew"
+format: html
+editor: visual
+---
+
+```{r}
+library(rvest)
+
+scrape_steamcharts <- function() {
+  url <- "https://steamcharts.com/app/730"
+  
+  page <- read_html(url)
+  
+  steam_data <- page %>%
+    html_element("table.common-table") %>%
+    html_table()
+  
+  return(steam_data)
+}
+
+steam_data <- scrape_steamcharts()
+```
+
+
+
+```{r}
+library(rvest)
+library(dplyr)
+library(tidyr)
+library(lubridate)
+library(plotly)
+
+# Scrape data
+scrape_steamcharts <- function() {
+  url <- "https://steamcharts.com/app/730"
+  
+  page <- read_html(url)
+  
+  steam_data <- page %>%
+    html_element("table.common-table") %>%
+    html_table()
+  
+  return(steam_data)
+}
+
+# Clean and prepare
+steam_data <- scrape_steamcharts() %>%
+  filter(Month != "Last 30 Days") %>%
+  mutate(
+    Month = parse_date_time(Month, orders = "my"),
+    `Avg. Players` = as.numeric(gsub(",", "", `Avg. Players`)),
+    `Peak Players` = as.numeric(gsub(",", "", `Peak Players`))
+  ) %>%
+  arrange(Month)
+
+# Set up empty base plot
+base <- plot_ly(
+  type = 'scatter',
+  mode = 'lines+markers',
+  x = steam_data$Month,
+  y = steam_data$`Avg. Players`,
+  name = "Avg. Players",
+  line = list(color = "cyan"),
+  marker = list(size = 5)
+) %>%
+  add_trace(
+    y = steam_data$`Peak Players`,
+    name = "Peak Players",
+    line = list(color = "orange"),
+    marker = list(size = 5)
+  )
+
+# Build frames manually
+frames <- lapply(1:nrow(steam_data), function(i) {
+  list(
+    name = as.character(steam_data$Month[i]),
+    data = list(
+      list(
+        x = steam_data$Month[1:i],
+        y = steam_data$`Avg. Players`[1:i],
+        type = 'scatter',
+        mode = 'lines+markers',
+        name = "Avg. Players"
+      ),
+      list(
+        x = steam_data$Month[1:i],
+        y = steam_data$`Peak Players`[1:i],
+        type = 'scatter',
+        mode = 'lines+markers',
+        name = "Peak Players"
+      )
+    )
+  )
+})
+
+# Animate it
+base %>%
+  layout(
+    title = "CS:GO Player Metrics Over Time",
+    xaxis = list(title = "Month"),
+    yaxis = list(title = "Player Count"),
+    plot_bgcolor = "#1D1D1B",
+    paper_bgcolor = "#1D1D1B",
+    font = list(color = "white"),
+    updatemenus = list(
+      list(
+        type = "buttons",
+        buttons = list(
+          list(label = "Play",
+               method = "animate",
+               args = list(NULL, list(frame = list(duration = 500, redraw = TRUE),
+                                      transition = list(duration = 0),
+                                      fromcurrent = TRUE,
+                                      mode = "immediate"))),
+          list(label = "Pause",
+               method = "animate",
+               args = list(NULL, list(mode = "immediate", frame = list(duration = 0), transition = list(duration = 0))))
+        ),
+        x = 1, xanchor = "right", y = 0, yanchor = "bottom"
+      )
+    ),
+    sliders = list(
+      list(
+        active = 0,
+        steps = lapply(1:nrow(steam_data), function(i) {
+          list(
+            label = format(steam_data$Month[i], "%b %Y"),
+            method = "animate",
+            args = list(
+              list(as.character(steam_data$Month[i])),
+              list(mode = "immediate", frame = list(duration = 0), transition = list(duration = 0))
+            )
+          )
+        }),
+        currentvalue = list(prefix = "Month: ", font = list(color = "white"))
+      )
+    )
+  ) %>%
+  animation_opts(
+    frame = 500,
+    transition = 0,
+    redraw = TRUE
+  ) %>%
+  animation_slider(hide = TRUE) %>%
+  animation_button(hide = TRUE) %>%
+  plotly::config(displayModeBar = TRUE) %>%
+  plotly::config(displaylogo = FALSE) %>%
+  plotly::plotly_build() %>%
+  `[[<-`("x", "frames", frames)
+
+```
+
+
+```{r}
+steam_data %>% gt() %>%
+  tab_header(
+    title = "Steam Player Statistics",
+    subtitle = "Monthly Peak Player Data"
+  ) %>%
+  fmt_number(
+    columns = c(`Peak Players`, Gain, `Avg. Players`),
+    decimals = 0,
+    use_seps = TRUE
+  ) %>%
+  tab_options(
+    table.border.top.width = px(2),
+    table.border.bottom.width = px(2),
+    table.font.size = px(14)
+  )
