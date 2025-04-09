@@ -23,6 +23,7 @@ library(parsnip)
 library(tidymodels)
 library(slider)
 library(rvest)
+library(DT)
 ```
 
 Layout Summary:
@@ -92,8 +93,8 @@ casesfinal <- c(
 
 ```
 
-```{r echo=FALSE, warning=FALSE}
-
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+# CSV Import
 url_skins <- "https://raw.githubusercontent.com/AndrewPettifor25/FIN_450_Steam_Final/refs/heads/main/steam_skins_raw.csv"
 all_skins_data <- read_csv(url_skins)
 
@@ -103,6 +104,7 @@ all_cases_data <- read_csv(url_cases)
 ```
 
 ```{r echo=FALSE}
+# Filtering and Cleaning
 
 all_skins_data_for_combine <- all_skins_data %>%
   rename(Item = Skin) %>%
@@ -139,6 +141,8 @@ past_month_items <- all_items_data_clean %>%
 ```
 
 ```{r echo=FALSE}
+# USD-CAD Exchange 
+
 fx_usdcad <- tq_get("CAD=X", get = "stock.prices", from = "2010-01-01")
 
 fx_usdcad_clean <- fx_usdcad %>%
@@ -151,6 +155,8 @@ fx_usdcad_filled <- fx_usdcad_clean %>%
 ```
 
 ```{r echo=FALSE}
+#Filtering and Cleaning for CAD
+
 CAD_Converted_Items <- all_items_data_clean %>%
   mutate(date_only = as.Date(date)) %>%
   left_join(fx_usdcad_filled, by = c("date_only" = "date")) %>%
@@ -162,6 +168,8 @@ CAD_Selected_Items <- CAD_Converted_Items %>%
 ```
 
 ```{r echo=FALSE}
+#Filtering and Cleaning for CAD
+
 Daily_CAD_Items <- CAD_Selected_Items %>%
   mutate(
     hour = hour(date),
@@ -176,6 +184,7 @@ Daily_CAD_Items <- CAD_Selected_Items %>%
 ```
 
 ```{r echo=FALSE}
+#Filtering and Cleaning for CAD
 
 Month_CAD_Items <- CAD_Selected_Items %>%
   filter(date >= Sys.Date() - months(1)) %>%
@@ -190,17 +199,18 @@ Month_CAD_Items <- CAD_Selected_Items %>%
 cases_data <- all_items_data_clean %>% filter(Item_Type == "Case")
 skins_data <- all_items_data_clean %>% filter(Item_Type == "Skin")
 
-
 ```
 
 
 # Steam Player Count
-```{r}
-library(rvest)
 
+```{r echo=FALSE}
+# Steam Player Count Scrape
 scrape_steamcharts <- function() {
   url <- "https://steamcharts.com/app/730"
-    page <- read_html(url)
+  
+  page <- read_html(url)
+  
   steam_data <- page %>%
     html_element("table.common-table") %>%
     html_table()
@@ -210,27 +220,65 @@ scrape_steamcharts <- function() {
 
 steam_data <- scrape_steamcharts()
 
+steam_data_formatted <- steam_data %>%
+  mutate(
+    `Avg. Players` = comma(`Avg. Players`),
+    `Peak Players` = comma(`Peak Players`)
+  )
+```
 
-steam_data %>% gt() %>%
-  tab_header(
-    title = "Steam Player Statistics",
-    subtitle = "Monthly Peak Player Data"
+
+
+```{r echo=FALSE}
+# Steam Player Count Bar Chart
+
+steam_data_march <- steam_data %>%
+  filter(Month != "Last 30 Days" & grepl("^March", Month)) %>%
+  mutate(
+    Year = sub(".* ", "", Month),
+    `Avg. Players` = as.numeric(`Avg. Players`)
   ) %>%
-  fmt_number(
-    columns = c(`Peak Players`, Gain, `Avg. Players`),
-    decimals = 0,
-    use_seps = TRUE
+  arrange(as.numeric(Year))
+
+steam_data_plot <- steam_data_march %>% 
+  select(Year, `Peak Players`, `Avg. Players`)
+
+
+plot_ly(steam_data_plot, x = ~Year) %>%
+  add_trace(
+    y = ~`Avg. Players`,
+    name = 'Avg. Players',
+    type = 'bar'
   ) %>%
-  tab_options(
-    table.border.top.width = px(2),
-    table.border.bottom.width = px(2),
-    table.font.size = px(14)
+  add_trace(
+    y = ~`Peak Players`,
+    name = 'Peak Players',
+    type = 'bar'
+  ) %>%
+  layout(
+    barmode = 'group',
+    title = "CS:GO March Player Counts by Year",
+    xaxis = list(title = "Year"),
+    yaxis = list(title = "Number of Players")
+    
+  )
+
+```
+
+```{r echo=FALSE}
+# Steam Player Count Data Table
+
+datatable(
+  steam_data_formatted,
+  options = list(
+    pageLength = 10,
+    autoWidth = TRUE)
   )
 ```
 # Visualizations
 
 ## Cases
-```{r echo=FALSE, warning=FALSE}
+```{r echo=FALSE, warning=FALSE, message=FALSE}
 cases_only <- Daily_CAD_Items %>%
   filter(Item_Type == "Case", Case %in% cases)  
 
@@ -246,7 +294,10 @@ plot_ly(cases_only, x = ~date, y = ~price_cad, color = ~Item, type = 'scatter', 
 
 ```
 
+
+
 ```{r echo=FALSE}
+# Filtering and Cleaning
 
 avg_last_month <- Month_CAD_Items %>%
   filter(Item_Type == "Case", Item %in% cases) %>%

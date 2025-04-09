@@ -104,8 +104,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ultra Minimal CS2/CSGO Player Data Extraction</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rvest)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rvest)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: package 'rvest' was built under R version 4.4.3</code></pre>
 </div>
@@ -124,53 +123,1588 @@ Attaching package: 'dplyr'</code></pre>
 
     intersect, setdiff, setequal, union</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define your HTML content</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>html_content <span class="ot">&lt;-</span> <span class="st">'</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="st">&lt;div class="chart table-responsive"&gt;</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="st">&lt;!-- Table content here - replace with your full HTML --&gt;</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="st">&lt;table class="table table-hover" id="chart-month-table"&gt;</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="st">&lt;thead&gt;</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="st">&lt;tr&gt;</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="st">&lt;th&gt;Month&lt;/th&gt;</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="st">&lt;th&gt;Peak&lt;/th&gt;</span></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="st">&lt;th&gt;Gain&lt;/th&gt;</span></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="st">&lt;th&gt;% Gain&lt;/th&gt;</span></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="st">&lt;th&gt;Average&lt;/th&gt;</span></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="st">&lt;th&gt;Avg % Gain&lt;/th&gt;</span></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="st">&lt;/tr&gt;</span></span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="st">&lt;/thead&gt;</span></span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="st">&lt;tbody class="tabular-nums"&gt;&lt;tr&gt;&lt;td data-sort="663"&gt;Last 30 days&lt;/td&gt;&lt;td data-sort="1824989"&gt;1,824,989&lt;/td&gt;&lt;td data-sort="0" class="price-discount-minor"&gt;0&lt;/td&gt;&lt;td data-sort="0" class="price-discount-minor"&gt;+0.0%&lt;/td&gt;&lt;td data-sort="0" class="table-prices-converted"&gt;-&lt;/td&gt;&lt;td class="table-prices-converted"&gt;-&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-sort="662"&gt;March 2025&lt;/td&gt;&lt;td data-sort="1824989"&gt;1,824,989&lt;/td&gt;&lt;td data-sort="35615" class="price-discount"&gt;+35,615&lt;/td&gt;&lt;td data-sort="2" class="price-discount"&gt;+2.0%&lt;/td&gt;&lt;td data-sort="0" class="table-prices-converted"&gt;-&lt;/td&gt;&lt;td class="table-prices-converted"&gt;-&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-sort="661"&gt;February 2025&lt;/td&gt;&lt;td data-sort="1789374"&gt;1,789,374&lt;/td&gt;&lt;td data-sort="184733" class="price-discount"&gt;+184,733&lt;/td&gt;&lt;td data-sort="12" class="price-discount"&gt;+11.5%&lt;/td&gt;&lt;td data-sort="0" class="table-prices-converted"&gt;-&lt;/td&gt;&lt;td class="table-prices-converted"&gt;-&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-sort="660"&gt;&lt;span class="chart-month-with-info tooltipped tooltipped-ne" aria-label="Premier Season 2"&gt;January 2025&lt;/span&gt;&lt;/td&gt;&lt;td data-sort="1604641"&gt;1,604,641&lt;/td&gt;&lt;td data-sort="-135620" class="price-discount-minor"&gt;-135,620&lt;/td&gt;&lt;td data-sort="-8" class="price-discount-minor"&gt;-7.8%&lt;/td&gt;&lt;td data-sort="0" class="table-prices-converted"&gt;-&lt;/td&gt;&lt;td class="table-prices-converted"&gt;-&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-sort="659"&gt;December 2024&lt;/td&gt;&lt;td data-sort="1740261"&gt;1,740,261&lt;/td&gt;&lt;td data-sort="178055" class="price-discount"&gt;+178,055&lt;/td&gt;&lt;td data-sort="11" class="price-discount"&gt;+11.4%&lt;/td&gt;&lt;td data-sort="0" class="table-prices-converted"&gt;-&lt;/td&gt;&lt;td class="table-prices-converted"&gt;-&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td data-sort="658"&gt;November 2024&lt;/td&gt;&lt;td data-sort="1562206"&gt;1,562,206&lt;/td&gt;&lt;td data-sort="63545" class="price-discount"&gt;+63,545&lt;/td&gt;&lt;td data-sort="4" class="price-discount"&gt;+4.2%&lt;/td&gt;&lt;td data-sort="0" class="table-prices-converted"&gt;-&lt;/td&gt;&lt;td class="table-prices-converted"&gt;-&lt;/td&gt;&lt;/tr&gt;</span></span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="st">&lt;/tbody&gt;</span></span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="st">&lt;/table&gt;</span></span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="st">&lt;/div&gt;</span></span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="st">'</span></span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="co"># One-step data extraction</span></span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>steam_data <span class="ot">&lt;-</span> <span class="fu">read_html</span>(html_content) <span class="sc">%&gt;%</span></span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_table</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>  .[[<span class="dv">1</span>]] <span class="sc">%&gt;%</span>   <span class="co"># Get the first table</span></span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">setNames</span>(<span class="fu">c</span>(<span class="st">"month"</span>, <span class="st">"peak_players"</span>, <span class="st">"gain"</span>, <span class="st">"percent_gain"</span>, <span class="st">"avg"</span>, <span class="st">"avg_gain"</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(month, peak_players, gain, percent_gain) <span class="sc">%&gt;%</span></span>
-<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Clean up numeric data</span></span>
-<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">peak_players =</span> <span class="fu">as.numeric</span>(<span class="fu">gsub</span>(<span class="st">","</span>, <span class="st">""</span>, peak_players)),</span>
-<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">gain =</span> <span class="fu">as.numeric</span>(<span class="fu">gsub</span>(<span class="st">"[^0-9.-]"</span>, <span class="st">""</span>, gain)),</span>
-<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Check if there's an event</span></span>
-<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">has_event =</span> <span class="fu">grepl</span>(<span class="st">"Season|Operation|Release|Test|Zone|Play"</span>, month)</span>
-<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a><span class="co"># Show the result</span></span>
-<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(steam_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 × 5
-  month         peak_players    gain percent_gain has_event
-  &lt;chr&gt;                &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;        &lt;lgl&gt;    
-1 Last 30 days       1824989       0 +0.0%        FALSE    
-2 March 2025         1824989   35615 +2.0%        FALSE    
-3 February 2025      1789374  184733 +11.5%       FALSE    
-4 January 2025       1604641 -135620 -7.8%        FALSE    
-5 December 2024      1740261  178055 +11.4%       FALSE    
-6 November 2024      1562206   63545 +4.2%        FALSE    </code></pre>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>scrape_steamcharts <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  url <span class="ot">&lt;-</span> <span class="st">"https://steamcharts.com/app/730"</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  page <span class="ot">&lt;-</span> <span class="fu">read_html</span>(url)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  steam_data <span class="ot">&lt;-</span> page <span class="sc">%&gt;%</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_element</span>(<span class="st">"table.common-table"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_table</span>()</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(steam_data)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>steam_data <span class="ot">&lt;-</span> <span class="fu">scrape_steamcharts</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>steam_data <span class="sc">%&gt;%</span> <span class="fu">gt</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_header</span>(</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Steam Player Statistics"</span>,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Monthly Peak Player Data"</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fmt_number</span>(</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> <span class="fu">c</span>(<span class="st">`</span><span class="at">Peak Players</span><span class="st">`</span>, Gain, <span class="st">`</span><span class="at">Avg. Players</span><span class="st">`</span>),</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">decimals =</span> <span class="dv">0</span>,</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">use_seps =</span> <span class="cn">TRUE</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_options</span>(</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">table.border.top.width =</span> <span class="fu">px</span>(<span class="dv">2</span>),</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">table.border.bottom.width =</span> <span class="fu">px</span>(<span class="dv">2</span>),</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">table.font.size =</span> <span class="fu">px</span>(<span class="dv">14</span>)</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fbfuyemqyb" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#fbfuyemqyb table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#fbfuyemqyb thead, #fbfuyemqyb tbody, #fbfuyemqyb tfoot, #fbfuyemqyb tr, #fbfuyemqyb td, #fbfuyemqyb th {
+  border-style: none;
+}
+
+#fbfuyemqyb p {
+  margin: 0;
+  padding: 0;
+}
+
+#fbfuyemqyb .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 14px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#fbfuyemqyb .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#fbfuyemqyb .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#fbfuyemqyb .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#fbfuyemqyb .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#fbfuyemqyb .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#fbfuyemqyb .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#fbfuyemqyb .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#fbfuyemqyb .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#fbfuyemqyb .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#fbfuyemqyb .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#fbfuyemqyb .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#fbfuyemqyb .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#fbfuyemqyb .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#fbfuyemqyb .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#fbfuyemqyb .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#fbfuyemqyb .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#fbfuyemqyb .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#fbfuyemqyb .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#fbfuyemqyb .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#fbfuyemqyb .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#fbfuyemqyb .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#fbfuyemqyb .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#fbfuyemqyb .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#fbfuyemqyb .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#fbfuyemqyb .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#fbfuyemqyb .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#fbfuyemqyb .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#fbfuyemqyb .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#fbfuyemqyb .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#fbfuyemqyb .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#fbfuyemqyb .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#fbfuyemqyb .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#fbfuyemqyb .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#fbfuyemqyb .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#fbfuyemqyb .gt_left {
+  text-align: left;
+}
+
+#fbfuyemqyb .gt_center {
+  text-align: center;
+}
+
+#fbfuyemqyb .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#fbfuyemqyb .gt_font_normal {
+  font-weight: normal;
+}
+
+#fbfuyemqyb .gt_font_bold {
+  font-weight: bold;
+}
+
+#fbfuyemqyb .gt_font_italic {
+  font-style: italic;
+}
+
+#fbfuyemqyb .gt_super {
+  font-size: 65%;
+}
+
+#fbfuyemqyb .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#fbfuyemqyb .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#fbfuyemqyb .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#fbfuyemqyb .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#fbfuyemqyb .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#fbfuyemqyb .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#fbfuyemqyb .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#fbfuyemqyb .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#fbfuyemqyb div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="header gt_heading">
+<th colspan="5" class="gt_heading gt_title gt_font_normal">Steam Player Statistics</th>
+</tr>
+<tr class="odd gt_heading">
+<th colspan="5" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border">Monthly Peak Player Data</th>
+</tr>
+<tr class="header gt_col_headings">
+<th id="Month" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Month</th>
+<th id="Avg.-Players" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Avg. Players</th>
+<th id="Gain" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Gain</th>
+<th id="a%-Gain" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">% Gain</th>
+<th id="Peak-Players" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Peak Players</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">Last 30 Days</td>
+<td class="gt_row gt_right" headers="Avg. Players">1,042,780</td>
+<td class="gt_row gt_right" headers="Gain">+3117.4</td>
+<td class="gt_row gt_right" headers="% Gain">+0.30%</td>
+<td class="gt_row gt_right" headers="Peak Players">1,818,368</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">March 2025</td>
+<td class="gt_row gt_right" headers="Avg. Players">1,039,663</td>
+<td class="gt_row gt_right" headers="Gain">36092.25</td>
+<td class="gt_row gt_right" headers="% Gain">+3.60%</td>
+<td class="gt_row gt_right" headers="Peak Players">1,818,368</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">February 2025</td>
+<td class="gt_row gt_right" headers="Avg. Players">1,003,571</td>
+<td class="gt_row gt_right" headers="Gain">89478.34</td>
+<td class="gt_row gt_right" headers="% Gain">+9.79%</td>
+<td class="gt_row gt_right" headers="Peak Players">1,783,434</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">January 2025</td>
+<td class="gt_row gt_right" headers="Avg. Players">914,092</td>
+<td class="gt_row gt_right" headers="Gain">138.86</td>
+<td class="gt_row gt_right" headers="% Gain">+0.02%</td>
+<td class="gt_row gt_right" headers="Peak Players">1,594,016</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">December 2024</td>
+<td class="gt_row gt_right" headers="Avg. Players">913,953</td>
+<td class="gt_row gt_right" headers="Gain">61789.06</td>
+<td class="gt_row gt_right" headers="% Gain">+7.25%</td>
+<td class="gt_row gt_right" headers="Peak Players">1,740,261</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">November 2024</td>
+<td class="gt_row gt_right" headers="Avg. Players">852,164</td>
+<td class="gt_row gt_right" headers="Gain">22725.54</td>
+<td class="gt_row gt_right" headers="% Gain">+2.74%</td>
+<td class="gt_row gt_right" headers="Peak Players">1,556,938</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">October 2024</td>
+<td class="gt_row gt_right" headers="Avg. Players">829,439</td>
+<td class="gt_row gt_right" headers="Gain">-6867.90</td>
+<td class="gt_row gt_right" headers="% Gain">-0.82%</td>
+<td class="gt_row gt_right" headers="Peak Players">1,484,045</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">September 2024</td>
+<td class="gt_row gt_right" headers="Avg. Players">836,307</td>
+<td class="gt_row gt_right" headers="Gain">-61031.22</td>
+<td class="gt_row gt_right" headers="% Gain">-6.80%</td>
+<td class="gt_row gt_right" headers="Peak Players">1,473,144</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">August 2024</td>
+<td class="gt_row gt_right" headers="Avg. Players">897,338</td>
+<td class="gt_row gt_right" headers="Gain">21972.80</td>
+<td class="gt_row gt_right" headers="% Gain">+2.51%</td>
+<td class="gt_row gt_right" headers="Peak Players">1,425,958</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">July 2024</td>
+<td class="gt_row gt_right" headers="Avg. Players">875,365</td>
+<td class="gt_row gt_right" headers="Gain">-72155.45</td>
+<td class="gt_row gt_right" headers="% Gain">-7.62%</td>
+<td class="gt_row gt_right" headers="Peak Players">1,342,171</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">June 2024</td>
+<td class="gt_row gt_right" headers="Avg. Players">947,521</td>
+<td class="gt_row gt_right" headers="Gain">-10686.81</td>
+<td class="gt_row gt_right" headers="% Gain">-1.12%</td>
+<td class="gt_row gt_right" headers="Peak Players">1,510,840</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">May 2024</td>
+<td class="gt_row gt_right" headers="Avg. Players">958,207</td>
+<td class="gt_row gt_right" headers="Gain">27458.36</td>
+<td class="gt_row gt_right" headers="% Gain">+2.95%</td>
+<td class="gt_row gt_right" headers="Peak Players">1,614,925</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">April 2024</td>
+<td class="gt_row gt_right" headers="Avg. Players">930,749</td>
+<td class="gt_row gt_right" headers="Gain">45119.29</td>
+<td class="gt_row gt_right" headers="% Gain">+5.09%</td>
+<td class="gt_row gt_right" headers="Peak Players">1,618,685</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">March 2024</td>
+<td class="gt_row gt_right" headers="Avg. Players">885,630</td>
+<td class="gt_row gt_right" headers="Gain">98998.87</td>
+<td class="gt_row gt_right" headers="% Gain">+12.59%</td>
+<td class="gt_row gt_right" headers="Peak Players">1,521,796</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">February 2024</td>
+<td class="gt_row gt_right" headers="Avg. Players">786,631</td>
+<td class="gt_row gt_right" headers="Gain">25771.59</td>
+<td class="gt_row gt_right" headers="% Gain">+3.39%</td>
+<td class="gt_row gt_right" headers="Peak Players">1,347,519</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">January 2024</td>
+<td class="gt_row gt_right" headers="Avg. Players">760,859</td>
+<td class="gt_row gt_right" headers="Gain">-9235.58</td>
+<td class="gt_row gt_right" headers="% Gain">-1.20%</td>
+<td class="gt_row gt_right" headers="Peak Players">1,277,907</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">December 2023</td>
+<td class="gt_row gt_right" headers="Avg. Players">770,095</td>
+<td class="gt_row gt_right" headers="Gain">55583.37</td>
+<td class="gt_row gt_right" headers="% Gain">+7.78%</td>
+<td class="gt_row gt_right" headers="Peak Players">1,248,217</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">November 2023</td>
+<td class="gt_row gt_right" headers="Avg. Players">714,511</td>
+<td class="gt_row gt_right" headers="Gain">-77613.53</td>
+<td class="gt_row gt_right" headers="% Gain">-9.80%</td>
+<td class="gt_row gt_right" headers="Peak Players">1,161,043</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">October 2023</td>
+<td class="gt_row gt_right" headers="Avg. Players">792,125</td>
+<td class="gt_row gt_right" headers="Gain">-184013.03</td>
+<td class="gt_row gt_right" headers="% Gain">-18.85%</td>
+<td class="gt_row gt_right" headers="Peak Players">1,364,902</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">September 2023</td>
+<td class="gt_row gt_right" headers="Avg. Players">976,138</td>
+<td class="gt_row gt_right" headers="Gain">53985.13</td>
+<td class="gt_row gt_right" headers="% Gain">+5.85%</td>
+<td class="gt_row gt_right" headers="Peak Players">1,556,326</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">August 2023</td>
+<td class="gt_row gt_right" headers="Avg. Players">922,153</td>
+<td class="gt_row gt_right" headers="Gain">40461.95</td>
+<td class="gt_row gt_right" headers="% Gain">+4.59%</td>
+<td class="gt_row gt_right" headers="Peak Players">1,369,511</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">July 2023</td>
+<td class="gt_row gt_right" headers="Avg. Players">881,691</td>
+<td class="gt_row gt_right" headers="Gain">-204275.90</td>
+<td class="gt_row gt_right" headers="% Gain">-18.81%</td>
+<td class="gt_row gt_right" headers="Peak Players">1,222,913</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">June 2023</td>
+<td class="gt_row gt_right" headers="Avg. Players">1,085,967</td>
+<td class="gt_row gt_right" headers="Gain">-31550.60</td>
+<td class="gt_row gt_right" headers="% Gain">-2.82%</td>
+<td class="gt_row gt_right" headers="Peak Players">1,665,869</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">May 2023</td>
+<td class="gt_row gt_right" headers="Avg. Players">1,117,517</td>
+<td class="gt_row gt_right" headers="Gain">199431.80</td>
+<td class="gt_row gt_right" headers="% Gain">+21.72%</td>
+<td class="gt_row gt_right" headers="Peak Players">1,802,853</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">April 2023</td>
+<td class="gt_row gt_right" headers="Avg. Players">918,086</td>
+<td class="gt_row gt_right" headers="Gain">74611.06</td>
+<td class="gt_row gt_right" headers="% Gain">+8.85%</td>
+<td class="gt_row gt_right" headers="Peak Players">1,510,231</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">March 2023</td>
+<td class="gt_row gt_right" headers="Avg. Players">843,475</td>
+<td class="gt_row gt_right" headers="Gain">38368.64</td>
+<td class="gt_row gt_right" headers="% Gain">+4.77%</td>
+<td class="gt_row gt_right" headers="Peak Players">1,519,457</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">February 2023</td>
+<td class="gt_row gt_right" headers="Avg. Players">805,106</td>
+<td class="gt_row gt_right" headers="Gain">78955.61</td>
+<td class="gt_row gt_right" headers="% Gain">+10.87%</td>
+<td class="gt_row gt_right" headers="Peak Players">1,354,248</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">January 2023</td>
+<td class="gt_row gt_right" headers="Avg. Players">726,150</td>
+<td class="gt_row gt_right" headers="Gain">96825.30</td>
+<td class="gt_row gt_right" headers="% Gain">+15.39%</td>
+<td class="gt_row gt_right" headers="Peak Players">1,199,684</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">December 2022</td>
+<td class="gt_row gt_right" headers="Avg. Players">629,325</td>
+<td class="gt_row gt_right" headers="Gain">8319.00</td>
+<td class="gt_row gt_right" headers="% Gain">+1.34%</td>
+<td class="gt_row gt_right" headers="Peak Players">1,065,079</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">November 2022</td>
+<td class="gt_row gt_right" headers="Avg. Players">621,006</td>
+<td class="gt_row gt_right" headers="Gain">12656.46</td>
+<td class="gt_row gt_right" headers="% Gain">+2.08%</td>
+<td class="gt_row gt_right" headers="Peak Players">1,129,095</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">October 2022</td>
+<td class="gt_row gt_right" headers="Avg. Players">608,350</td>
+<td class="gt_row gt_right" headers="Gain">-10426.50</td>
+<td class="gt_row gt_right" headers="% Gain">-1.69%</td>
+<td class="gt_row gt_right" headers="Peak Players">1,078,860</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">September 2022</td>
+<td class="gt_row gt_right" headers="Avg. Players">618,776</td>
+<td class="gt_row gt_right" headers="Gain">-22668.74</td>
+<td class="gt_row gt_right" headers="% Gain">-3.53%</td>
+<td class="gt_row gt_right" headers="Peak Players">1,100,366</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">August 2022</td>
+<td class="gt_row gt_right" headers="Avg. Players">641,445</td>
+<td class="gt_row gt_right" headers="Gain">46991.71</td>
+<td class="gt_row gt_right" headers="% Gain">+7.91%</td>
+<td class="gt_row gt_right" headers="Peak Players">1,039,889</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">July 2022</td>
+<td class="gt_row gt_right" headers="Avg. Players">594,453</td>
+<td class="gt_row gt_right" headers="Gain">22230.60</td>
+<td class="gt_row gt_right" headers="% Gain">+3.88%</td>
+<td class="gt_row gt_right" headers="Peak Players">928,329</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">June 2022</td>
+<td class="gt_row gt_right" headers="Avg. Players">572,222</td>
+<td class="gt_row gt_right" headers="Gain">7260.76</td>
+<td class="gt_row gt_right" headers="% Gain">+1.29%</td>
+<td class="gt_row gt_right" headers="Peak Players">906,670</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">May 2022</td>
+<td class="gt_row gt_right" headers="Avg. Players">564,962</td>
+<td class="gt_row gt_right" headers="Gain">-4021.46</td>
+<td class="gt_row gt_right" headers="% Gain">-0.71%</td>
+<td class="gt_row gt_right" headers="Peak Players">923,996</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">April 2022</td>
+<td class="gt_row gt_right" headers="Avg. Players">568,983</td>
+<td class="gt_row gt_right" headers="Gain">-12506.53</td>
+<td class="gt_row gt_right" headers="% Gain">-2.15%</td>
+<td class="gt_row gt_right" headers="Peak Players">1,013,237</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">March 2022</td>
+<td class="gt_row gt_right" headers="Avg. Players">581,490</td>
+<td class="gt_row gt_right" headers="Gain">-53148.71</td>
+<td class="gt_row gt_right" headers="% Gain">-8.37%</td>
+<td class="gt_row gt_right" headers="Peak Players">987,993</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">February 2022</td>
+<td class="gt_row gt_right" headers="Avg. Players">634,638</td>
+<td class="gt_row gt_right" headers="Gain">32262.13</td>
+<td class="gt_row gt_right" headers="% Gain">+5.36%</td>
+<td class="gt_row gt_right" headers="Peak Players">995,163</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">January 2022</td>
+<td class="gt_row gt_right" headers="Avg. Players">602,376</td>
+<td class="gt_row gt_right" headers="Gain">55762.08</td>
+<td class="gt_row gt_right" headers="% Gain">+10.20%</td>
+<td class="gt_row gt_right" headers="Peak Players">991,625</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">December 2021</td>
+<td class="gt_row gt_right" headers="Avg. Players">546,614</td>
+<td class="gt_row gt_right" headers="Gain">-1547.48</td>
+<td class="gt_row gt_right" headers="% Gain">-0.28%</td>
+<td class="gt_row gt_right" headers="Peak Players">950,586</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">November 2021</td>
+<td class="gt_row gt_right" headers="Avg. Players">548,162</td>
+<td class="gt_row gt_right" headers="Gain">35725.82</td>
+<td class="gt_row gt_right" headers="% Gain">+6.97%</td>
+<td class="gt_row gt_right" headers="Peak Players">935,593</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">October 2021</td>
+<td class="gt_row gt_right" headers="Avg. Players">512,436</td>
+<td class="gt_row gt_right" headers="Gain">84.93</td>
+<td class="gt_row gt_right" headers="% Gain">+0.02%</td>
+<td class="gt_row gt_right" headers="Peak Players">864,966</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">September 2021</td>
+<td class="gt_row gt_right" headers="Avg. Players">512,351</td>
+<td class="gt_row gt_right" headers="Gain">268.96</td>
+<td class="gt_row gt_right" headers="% Gain">+0.05%</td>
+<td class="gt_row gt_right" headers="Peak Players">942,519</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">August 2021</td>
+<td class="gt_row gt_right" headers="Avg. Players">512,082</td>
+<td class="gt_row gt_right" headers="Gain">6014.60</td>
+<td class="gt_row gt_right" headers="% Gain">+1.19%</td>
+<td class="gt_row gt_right" headers="Peak Players">802,544</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">July 2021</td>
+<td class="gt_row gt_right" headers="Avg. Players">506,067</td>
+<td class="gt_row gt_right" headers="Gain">-43279.72</td>
+<td class="gt_row gt_right" headers="% Gain">-7.88%</td>
+<td class="gt_row gt_right" headers="Peak Players">763,523</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">June 2021</td>
+<td class="gt_row gt_right" headers="Avg. Players">549,347</td>
+<td class="gt_row gt_right" headers="Gain">-110541.81</td>
+<td class="gt_row gt_right" headers="% Gain">-16.75%</td>
+<td class="gt_row gt_right" headers="Peak Players">929,940</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">May 2021</td>
+<td class="gt_row gt_right" headers="Avg. Players">659,889</td>
+<td class="gt_row gt_right" headers="Gain">-63457.63</td>
+<td class="gt_row gt_right" headers="% Gain">-8.77%</td>
+<td class="gt_row gt_right" headers="Peak Players">1,087,197</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">April 2021</td>
+<td class="gt_row gt_right" headers="Avg. Players">723,347</td>
+<td class="gt_row gt_right" headers="Gain">-17581.31</td>
+<td class="gt_row gt_right" headers="% Gain">-2.37%</td>
+<td class="gt_row gt_right" headers="Peak Players">1,148,077</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">March 2021</td>
+<td class="gt_row gt_right" headers="Avg. Players">740,928</td>
+<td class="gt_row gt_right" headers="Gain">-85.42</td>
+<td class="gt_row gt_right" headers="% Gain">-0.01%</td>
+<td class="gt_row gt_right" headers="Peak Players">1,198,581</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">February 2021</td>
+<td class="gt_row gt_right" headers="Avg. Players">741,013</td>
+<td class="gt_row gt_right" headers="Gain">-2196.42</td>
+<td class="gt_row gt_right" headers="% Gain">-0.30%</td>
+<td class="gt_row gt_right" headers="Peak Players">1,123,485</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">January 2021</td>
+<td class="gt_row gt_right" headers="Avg. Players">743,210</td>
+<td class="gt_row gt_right" headers="Gain">25405.91</td>
+<td class="gt_row gt_right" headers="% Gain">+3.54%</td>
+<td class="gt_row gt_right" headers="Peak Players">1,124,553</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">December 2020</td>
+<td class="gt_row gt_right" headers="Avg. Players">717,804</td>
+<td class="gt_row gt_right" headers="Gain">49049.17</td>
+<td class="gt_row gt_right" headers="% Gain">+7.33%</td>
+<td class="gt_row gt_right" headers="Peak Players">1,164,396</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">November 2020</td>
+<td class="gt_row gt_right" headers="Avg. Players">668,755</td>
+<td class="gt_row gt_right" headers="Gain">55087.89</td>
+<td class="gt_row gt_right" headers="% Gain">+8.98%</td>
+<td class="gt_row gt_right" headers="Peak Players">1,037,464</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">October 2020</td>
+<td class="gt_row gt_right" headers="Avg. Players">613,667</td>
+<td class="gt_row gt_right" headers="Gain">6816.37</td>
+<td class="gt_row gt_right" headers="% Gain">+1.12%</td>
+<td class="gt_row gt_right" headers="Peak Players">943,876</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">September 2020</td>
+<td class="gt_row gt_right" headers="Avg. Players">606,850</td>
+<td class="gt_row gt_right" headers="Gain">-33107.34</td>
+<td class="gt_row gt_right" headers="% Gain">-5.17%</td>
+<td class="gt_row gt_right" headers="Peak Players">977,769</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">August 2020</td>
+<td class="gt_row gt_right" headers="Avg. Players">639,958</td>
+<td class="gt_row gt_right" headers="Gain">14056.85</td>
+<td class="gt_row gt_right" headers="% Gain">+2.25%</td>
+<td class="gt_row gt_right" headers="Peak Players">925,348</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">July 2020</td>
+<td class="gt_row gt_right" headers="Avg. Players">625,901</td>
+<td class="gt_row gt_right" headers="Gain">-45746.65</td>
+<td class="gt_row gt_right" headers="% Gain">-6.81%</td>
+<td class="gt_row gt_right" headers="Peak Players">857,560</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">June 2020</td>
+<td class="gt_row gt_right" headers="Avg. Players">671,647</td>
+<td class="gt_row gt_right" headers="Gain">-97147.79</td>
+<td class="gt_row gt_right" headers="% Gain">-12.64%</td>
+<td class="gt_row gt_right" headers="Peak Players">1,009,467</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">May 2020</td>
+<td class="gt_row gt_right" headers="Avg. Players">768,795</td>
+<td class="gt_row gt_right" headers="Gain">-88808.97</td>
+<td class="gt_row gt_right" headers="% Gain">-10.36%</td>
+<td class="gt_row gt_right" headers="Peak Players">1,193,359</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">April 2020</td>
+<td class="gt_row gt_right" headers="Avg. Players">857,604</td>
+<td class="gt_row gt_right" headers="Gain">186570.94</td>
+<td class="gt_row gt_right" headers="% Gain">+27.80%</td>
+<td class="gt_row gt_right" headers="Peak Players">1,305,714</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">March 2020</td>
+<td class="gt_row gt_right" headers="Avg. Players">671,033</td>
+<td class="gt_row gt_right" headers="Gain">127054.13</td>
+<td class="gt_row gt_right" headers="% Gain">+23.36%</td>
+<td class="gt_row gt_right" headers="Peak Players">1,145,972</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">February 2020</td>
+<td class="gt_row gt_right" headers="Avg. Players">543,979</td>
+<td class="gt_row gt_right" headers="Gain">42783.15</td>
+<td class="gt_row gt_right" headers="% Gain">+8.54%</td>
+<td class="gt_row gt_right" headers="Peak Players">916,996</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">January 2020</td>
+<td class="gt_row gt_right" headers="Avg. Players">501,196</td>
+<td class="gt_row gt_right" headers="Gain">44494.44</td>
+<td class="gt_row gt_right" headers="% Gain">+9.74%</td>
+<td class="gt_row gt_right" headers="Peak Players">817,229</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">December 2019</td>
+<td class="gt_row gt_right" headers="Avg. Players">456,702</td>
+<td class="gt_row gt_right" headers="Gain">30620.76</td>
+<td class="gt_row gt_right" headers="% Gain">+7.19%</td>
+<td class="gt_row gt_right" headers="Peak Players">767,060</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">November 2019</td>
+<td class="gt_row gt_right" headers="Avg. Players">426,081</td>
+<td class="gt_row gt_right" headers="Gain">17085.50</td>
+<td class="gt_row gt_right" headers="% Gain">+4.18%</td>
+<td class="gt_row gt_right" headers="Peak Players">758,412</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">October 2019</td>
+<td class="gt_row gt_right" headers="Avg. Players">408,995</td>
+<td class="gt_row gt_right" headers="Gain">-1930.29</td>
+<td class="gt_row gt_right" headers="% Gain">-0.47%</td>
+<td class="gt_row gt_right" headers="Peak Players">747,937</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">September 2019</td>
+<td class="gt_row gt_right" headers="Avg. Players">410,926</td>
+<td class="gt_row gt_right" headers="Gain">-4171.70</td>
+<td class="gt_row gt_right" headers="% Gain">-1.00%</td>
+<td class="gt_row gt_right" headers="Peak Players">720,052</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">August 2019</td>
+<td class="gt_row gt_right" headers="Avg. Players">415,097</td>
+<td class="gt_row gt_right" headers="Gain">21314.48</td>
+<td class="gt_row gt_right" headers="% Gain">+5.41%</td>
+<td class="gt_row gt_right" headers="Peak Players">647,461</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">July 2019</td>
+<td class="gt_row gt_right" headers="Avg. Players">393,783</td>
+<td class="gt_row gt_right" headers="Gain">4406.10</td>
+<td class="gt_row gt_right" headers="% Gain">+1.13%</td>
+<td class="gt_row gt_right" headers="Peak Players">578,933</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">June 2019</td>
+<td class="gt_row gt_right" headers="Avg. Players">389,377</td>
+<td class="gt_row gt_right" headers="Gain">24959.42</td>
+<td class="gt_row gt_right" headers="% Gain">+6.85%</td>
+<td class="gt_row gt_right" headers="Peak Players">587,724</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">May 2019</td>
+<td class="gt_row gt_right" headers="Avg. Players">364,417</td>
+<td class="gt_row gt_right" headers="Gain">12427.39</td>
+<td class="gt_row gt_right" headers="% Gain">+3.53%</td>
+<td class="gt_row gt_right" headers="Peak Players">588,453</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">April 2019</td>
+<td class="gt_row gt_right" headers="Avg. Players">351,990</td>
+<td class="gt_row gt_right" headers="Gain">-38250.24</td>
+<td class="gt_row gt_right" headers="% Gain">-9.80%</td>
+<td class="gt_row gt_right" headers="Peak Players">621,614</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">March 2019</td>
+<td class="gt_row gt_right" headers="Avg. Players">390,240</td>
+<td class="gt_row gt_right" headers="Gain">18881.20</td>
+<td class="gt_row gt_right" headers="% Gain">+5.08%</td>
+<td class="gt_row gt_right" headers="Peak Players">680,071</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">February 2019</td>
+<td class="gt_row gt_right" headers="Avg. Players">371,359</td>
+<td class="gt_row gt_right" headers="Gain">-30007.91</td>
+<td class="gt_row gt_right" headers="% Gain">-7.48%</td>
+<td class="gt_row gt_right" headers="Peak Players">654,069</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">January 2019</td>
+<td class="gt_row gt_right" headers="Avg. Players">401,367</td>
+<td class="gt_row gt_right" headers="Gain">5857.61</td>
+<td class="gt_row gt_right" headers="% Gain">+1.48%</td>
+<td class="gt_row gt_right" headers="Peak Players">684,511</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">December 2018</td>
+<td class="gt_row gt_right" headers="Avg. Players">395,509</td>
+<td class="gt_row gt_right" headers="Gain">85423.83</td>
+<td class="gt_row gt_right" headers="% Gain">+27.55%</td>
+<td class="gt_row gt_right" headers="Peak Players">746,548</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">November 2018</td>
+<td class="gt_row gt_right" headers="Avg. Players">310,085</td>
+<td class="gt_row gt_right" headers="Gain">-15822.39</td>
+<td class="gt_row gt_right" headers="% Gain">-4.85%</td>
+<td class="gt_row gt_right" headers="Peak Players">546,031</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">October 2018</td>
+<td class="gt_row gt_right" headers="Avg. Players">325,908</td>
+<td class="gt_row gt_right" headers="Gain">-7256.17</td>
+<td class="gt_row gt_right" headers="% Gain">-2.18%</td>
+<td class="gt_row gt_right" headers="Peak Players">565,968</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">September 2018</td>
+<td class="gt_row gt_right" headers="Avg. Players">333,164</td>
+<td class="gt_row gt_right" headers="Gain">49632.68</td>
+<td class="gt_row gt_right" headers="% Gain">+17.51%</td>
+<td class="gt_row gt_right" headers="Peak Players">583,029</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">August 2018</td>
+<td class="gt_row gt_right" headers="Avg. Players">283,531</td>
+<td class="gt_row gt_right" headers="Gain">10224.05</td>
+<td class="gt_row gt_right" headers="% Gain">+3.74%</td>
+<td class="gt_row gt_right" headers="Peak Players">454,370</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">July 2018</td>
+<td class="gt_row gt_right" headers="Avg. Players">273,307</td>
+<td class="gt_row gt_right" headers="Gain">6445.02</td>
+<td class="gt_row gt_right" headers="% Gain">+2.42%</td>
+<td class="gt_row gt_right" headers="Peak Players">426,008</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">June 2018</td>
+<td class="gt_row gt_right" headers="Avg. Players">266,862</td>
+<td class="gt_row gt_right" headers="Gain">4691.36</td>
+<td class="gt_row gt_right" headers="% Gain">+1.79%</td>
+<td class="gt_row gt_right" headers="Peak Players">420,261</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">May 2018</td>
+<td class="gt_row gt_right" headers="Avg. Players">262,171</td>
+<td class="gt_row gt_right" headers="Gain">-26905.82</td>
+<td class="gt_row gt_right" headers="% Gain">-9.31%</td>
+<td class="gt_row gt_right" headers="Peak Players">454,481</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">April 2018</td>
+<td class="gt_row gt_right" headers="Avg. Players">289,077</td>
+<td class="gt_row gt_right" headers="Gain">-65193.64</td>
+<td class="gt_row gt_right" headers="% Gain">-18.40%</td>
+<td class="gt_row gt_right" headers="Peak Players">523,262</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">March 2018</td>
+<td class="gt_row gt_right" headers="Avg. Players">354,270</td>
+<td class="gt_row gt_right" headers="Gain">-28186.77</td>
+<td class="gt_row gt_right" headers="% Gain">-7.37%</td>
+<td class="gt_row gt_right" headers="Peak Players">672,502</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">February 2018</td>
+<td class="gt_row gt_right" headers="Avg. Players">382,457</td>
+<td class="gt_row gt_right" headers="Gain">426.57</td>
+<td class="gt_row gt_right" headers="% Gain">+0.11%</td>
+<td class="gt_row gt_right" headers="Peak Players">686,588</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">January 2018</td>
+<td class="gt_row gt_right" headers="Avg. Players">382,031</td>
+<td class="gt_row gt_right" headers="Gain">41153.65</td>
+<td class="gt_row gt_right" headers="% Gain">+12.07%</td>
+<td class="gt_row gt_right" headers="Peak Players">715,850</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">December 2017</td>
+<td class="gt_row gt_right" headers="Avg. Players">340,877</td>
+<td class="gt_row gt_right" headers="Gain">19745.48</td>
+<td class="gt_row gt_right" headers="% Gain">+6.15%</td>
+<td class="gt_row gt_right" headers="Peak Players">598,405</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">November 2017</td>
+<td class="gt_row gt_right" headers="Avg. Players">321,131</td>
+<td class="gt_row gt_right" headers="Gain">-20729.86</td>
+<td class="gt_row gt_right" headers="% Gain">-6.06%</td>
+<td class="gt_row gt_right" headers="Peak Players">601,881</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">October 2017</td>
+<td class="gt_row gt_right" headers="Avg. Players">341,861</td>
+<td class="gt_row gt_right" headers="Gain">-12540.83</td>
+<td class="gt_row gt_right" headers="% Gain">-3.54%</td>
+<td class="gt_row gt_right" headers="Peak Players">639,968</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">September 2017</td>
+<td class="gt_row gt_right" headers="Avg. Players">354,402</td>
+<td class="gt_row gt_right" headers="Gain">-20023.60</td>
+<td class="gt_row gt_right" headers="% Gain">-5.35%</td>
+<td class="gt_row gt_right" headers="Peak Players">665,371</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">August 2017</td>
+<td class="gt_row gt_right" headers="Avg. Players">374,426</td>
+<td class="gt_row gt_right" headers="Gain">-3163.35</td>
+<td class="gt_row gt_right" headers="% Gain">-0.84%</td>
+<td class="gt_row gt_right" headers="Peak Players">595,781</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">July 2017</td>
+<td class="gt_row gt_right" headers="Avg. Players">377,589</td>
+<td class="gt_row gt_right" headers="Gain">3201.00</td>
+<td class="gt_row gt_right" headers="% Gain">+0.85%</td>
+<td class="gt_row gt_right" headers="Peak Players">624,785</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">June 2017</td>
+<td class="gt_row gt_right" headers="Avg. Players">374,388</td>
+<td class="gt_row gt_right" headers="Gain">2558.70</td>
+<td class="gt_row gt_right" headers="% Gain">+0.69%</td>
+<td class="gt_row gt_right" headers="Peak Players">614,621</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">May 2017</td>
+<td class="gt_row gt_right" headers="Avg. Players">371,829</td>
+<td class="gt_row gt_right" headers="Gain">-20369.85</td>
+<td class="gt_row gt_right" headers="% Gain">-5.19%</td>
+<td class="gt_row gt_right" headers="Peak Players">692,966</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">April 2017</td>
+<td class="gt_row gt_right" headers="Avg. Players">392,199</td>
+<td class="gt_row gt_right" headers="Gain">5290.47</td>
+<td class="gt_row gt_right" headers="% Gain">+1.37%</td>
+<td class="gt_row gt_right" headers="Peak Players">709,841</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">March 2017</td>
+<td class="gt_row gt_right" headers="Avg. Players">386,909</td>
+<td class="gt_row gt_right" headers="Gain">-15476.99</td>
+<td class="gt_row gt_right" headers="% Gain">-3.85%</td>
+<td class="gt_row gt_right" headers="Peak Players">742,356</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">February 2017</td>
+<td class="gt_row gt_right" headers="Avg. Players">402,386</td>
+<td class="gt_row gt_right" headers="Gain">9276.18</td>
+<td class="gt_row gt_right" headers="% Gain">+2.36%</td>
+<td class="gt_row gt_right" headers="Peak Players">744,468</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">January 2017</td>
+<td class="gt_row gt_right" headers="Avg. Players">393,110</td>
+<td class="gt_row gt_right" headers="Gain">50913.83</td>
+<td class="gt_row gt_right" headers="% Gain">+14.88%</td>
+<td class="gt_row gt_right" headers="Peak Players">814,616</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">December 2016</td>
+<td class="gt_row gt_right" headers="Avg. Players">342,196</td>
+<td class="gt_row gt_right" headers="Gain">13150.44</td>
+<td class="gt_row gt_right" headers="% Gain">+4.00%</td>
+<td class="gt_row gt_right" headers="Peak Players">662,460</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">November 2016</td>
+<td class="gt_row gt_right" headers="Avg. Players">329,045</td>
+<td class="gt_row gt_right" headers="Gain">-4031.20</td>
+<td class="gt_row gt_right" headers="% Gain">-1.21%</td>
+<td class="gt_row gt_right" headers="Peak Players">627,124</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">October 2016</td>
+<td class="gt_row gt_right" headers="Avg. Players">333,076</td>
+<td class="gt_row gt_right" headers="Gain">10550.57</td>
+<td class="gt_row gt_right" headers="% Gain">+3.27%</td>
+<td class="gt_row gt_right" headers="Peak Players">661,985</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">September 2016</td>
+<td class="gt_row gt_right" headers="Avg. Players">322,526</td>
+<td class="gt_row gt_right" headers="Gain">-24703.36</td>
+<td class="gt_row gt_right" headers="% Gain">-7.11%</td>
+<td class="gt_row gt_right" headers="Peak Players">638,360</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">August 2016</td>
+<td class="gt_row gt_right" headers="Avg. Players">347,229</td>
+<td class="gt_row gt_right" headers="Gain">-6548.31</td>
+<td class="gt_row gt_right" headers="% Gain">-1.85%</td>
+<td class="gt_row gt_right" headers="Peak Players">599,095</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">July 2016</td>
+<td class="gt_row gt_right" headers="Avg. Players">353,778</td>
+<td class="gt_row gt_right" headers="Gain">19466.50</td>
+<td class="gt_row gt_right" headers="% Gain">+5.82%</td>
+<td class="gt_row gt_right" headers="Peak Players">636,056</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">June 2016</td>
+<td class="gt_row gt_right" headers="Avg. Players">334,311</td>
+<td class="gt_row gt_right" headers="Gain">-4427.34</td>
+<td class="gt_row gt_right" headers="% Gain">-1.31%</td>
+<td class="gt_row gt_right" headers="Peak Players">579,110</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">May 2016</td>
+<td class="gt_row gt_right" headers="Avg. Players">338,738</td>
+<td class="gt_row gt_right" headers="Gain">-37057.47</td>
+<td class="gt_row gt_right" headers="% Gain">-9.86%</td>
+<td class="gt_row gt_right" headers="Peak Players">668,612</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">April 2016</td>
+<td class="gt_row gt_right" headers="Avg. Players">375,796</td>
+<td class="gt_row gt_right" headers="Gain">-3631.08</td>
+<td class="gt_row gt_right" headers="% Gain">-0.96%</td>
+<td class="gt_row gt_right" headers="Peak Players">850,485</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">March 2016</td>
+<td class="gt_row gt_right" headers="Avg. Players">379,427</td>
+<td class="gt_row gt_right" headers="Gain">3141.92</td>
+<td class="gt_row gt_right" headers="% Gain">+0.83%</td>
+<td class="gt_row gt_right" headers="Peak Players">737,599</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">February 2016</td>
+<td class="gt_row gt_right" headers="Avg. Players">376,285</td>
+<td class="gt_row gt_right" headers="Gain">10913.93</td>
+<td class="gt_row gt_right" headers="% Gain">+2.99%</td>
+<td class="gt_row gt_right" headers="Peak Players">738,969</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">January 2016</td>
+<td class="gt_row gt_right" headers="Avg. Players">365,371</td>
+<td class="gt_row gt_right" headers="Gain">-12076.02</td>
+<td class="gt_row gt_right" headers="% Gain">-3.20%</td>
+<td class="gt_row gt_right" headers="Peak Players">667,432</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">December 2015</td>
+<td class="gt_row gt_right" headers="Avg. Players">377,447</td>
+<td class="gt_row gt_right" headers="Gain">16521.23</td>
+<td class="gt_row gt_right" headers="% Gain">+4.58%</td>
+<td class="gt_row gt_right" headers="Peak Players">823,694</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">November 2015</td>
+<td class="gt_row gt_right" headers="Avg. Players">360,926</td>
+<td class="gt_row gt_right" headers="Gain">-1840.21</td>
+<td class="gt_row gt_right" headers="% Gain">-0.51%</td>
+<td class="gt_row gt_right" headers="Peak Players">786,707</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">October 2015</td>
+<td class="gt_row gt_right" headers="Avg. Players">362,766</td>
+<td class="gt_row gt_right" headers="Gain">6860.76</td>
+<td class="gt_row gt_right" headers="% Gain">+1.93%</td>
+<td class="gt_row gt_right" headers="Peak Players">732,093</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">September 2015</td>
+<td class="gt_row gt_right" headers="Avg. Players">355,905</td>
+<td class="gt_row gt_right" headers="Gain">-1629.91</td>
+<td class="gt_row gt_right" headers="% Gain">-0.46%</td>
+<td class="gt_row gt_right" headers="Peak Players">725,939</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">August 2015</td>
+<td class="gt_row gt_right" headers="Avg. Players">357,535</td>
+<td class="gt_row gt_right" headers="Gain">28002.87</td>
+<td class="gt_row gt_right" headers="% Gain">+8.50%</td>
+<td class="gt_row gt_right" headers="Peak Players">819,902</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">July 2015</td>
+<td class="gt_row gt_right" headers="Avg. Players">329,532</td>
+<td class="gt_row gt_right" headers="Gain">-14623.63</td>
+<td class="gt_row gt_right" headers="% Gain">-4.25%</td>
+<td class="gt_row gt_right" headers="Peak Players">541,181</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">June 2015</td>
+<td class="gt_row gt_right" headers="Avg. Players">344,156</td>
+<td class="gt_row gt_right" headers="Gain">26869.72</td>
+<td class="gt_row gt_right" headers="% Gain">+8.47%</td>
+<td class="gt_row gt_right" headers="Peak Players">610,401</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">May 2015</td>
+<td class="gt_row gt_right" headers="Avg. Players">317,286</td>
+<td class="gt_row gt_right" headers="Gain">25537.55</td>
+<td class="gt_row gt_right" headers="% Gain">+8.75%</td>
+<td class="gt_row gt_right" headers="Peak Players">677,701</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">April 2015</td>
+<td class="gt_row gt_right" headers="Avg. Players">291,749</td>
+<td class="gt_row gt_right" headers="Gain">23752.43</td>
+<td class="gt_row gt_right" headers="% Gain">+8.86%</td>
+<td class="gt_row gt_right" headers="Peak Players">568,556</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">March 2015</td>
+<td class="gt_row gt_right" headers="Avg. Players">267,996</td>
+<td class="gt_row gt_right" headers="Gain">28061.68</td>
+<td class="gt_row gt_right" headers="% Gain">+11.70%</td>
+<td class="gt_row gt_right" headers="Peak Players">595,439</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">February 2015</td>
+<td class="gt_row gt_right" headers="Avg. Players">239,935</td>
+<td class="gt_row gt_right" headers="Gain">5863.96</td>
+<td class="gt_row gt_right" headers="% Gain">+2.51%</td>
+<td class="gt_row gt_right" headers="Peak Players">455,508</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">January 2015</td>
+<td class="gt_row gt_right" headers="Avg. Players">234,071</td>
+<td class="gt_row gt_right" headers="Gain">50481.18</td>
+<td class="gt_row gt_right" headers="% Gain">+27.50%</td>
+<td class="gt_row gt_right" headers="Peak Players">443,188</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">December 2014</td>
+<td class="gt_row gt_right" headers="Avg. Players">183,590</td>
+<td class="gt_row gt_right" headers="Gain">36260.43</td>
+<td class="gt_row gt_right" headers="% Gain">+24.61%</td>
+<td class="gt_row gt_right" headers="Peak Players">367,634</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">November 2014</td>
+<td class="gt_row gt_right" headers="Avg. Players">147,329</td>
+<td class="gt_row gt_right" headers="Gain">13791.37</td>
+<td class="gt_row gt_right" headers="% Gain">+10.33%</td>
+<td class="gt_row gt_right" headers="Peak Players">348,018</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">October 2014</td>
+<td class="gt_row gt_right" headers="Avg. Players">133,538</td>
+<td class="gt_row gt_right" headers="Gain">2503.02</td>
+<td class="gt_row gt_right" headers="% Gain">+1.91%</td>
+<td class="gt_row gt_right" headers="Peak Players">260,613</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">September 2014</td>
+<td class="gt_row gt_right" headers="Avg. Players">131,035</td>
+<td class="gt_row gt_right" headers="Gain">-2151.11</td>
+<td class="gt_row gt_right" headers="% Gain">-1.62%</td>
+<td class="gt_row gt_right" headers="Peak Players">242,494</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">August 2014</td>
+<td class="gt_row gt_right" headers="Avg. Players">133,186</td>
+<td class="gt_row gt_right" headers="Gain">27047.79</td>
+<td class="gt_row gt_right" headers="% Gain">+25.48%</td>
+<td class="gt_row gt_right" headers="Peak Players">277,192</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">July 2014</td>
+<td class="gt_row gt_right" headers="Avg. Players">106,138</td>
+<td class="gt_row gt_right" headers="Gain">21974.38</td>
+<td class="gt_row gt_right" headers="% Gain">+26.11%</td>
+<td class="gt_row gt_right" headers="Peak Players">193,613</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">June 2014</td>
+<td class="gt_row gt_right" headers="Avg. Players">84,164</td>
+<td class="gt_row gt_right" headers="Gain">-761.40</td>
+<td class="gt_row gt_right" headers="% Gain">-0.90%</td>
+<td class="gt_row gt_right" headers="Peak Players">164,134</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">May 2014</td>
+<td class="gt_row gt_right" headers="Avg. Players">84,925</td>
+<td class="gt_row gt_right" headers="Gain">6044.49</td>
+<td class="gt_row gt_right" headers="% Gain">+7.66%</td>
+<td class="gt_row gt_right" headers="Peak Players">170,137</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">April 2014</td>
+<td class="gt_row gt_right" headers="Avg. Players">78,881</td>
+<td class="gt_row gt_right" headers="Gain">8737.20</td>
+<td class="gt_row gt_right" headers="% Gain">+12.46%</td>
+<td class="gt_row gt_right" headers="Peak Players">142,526</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">March 2014</td>
+<td class="gt_row gt_right" headers="Avg. Players">70,143</td>
+<td class="gt_row gt_right" headers="Gain">10351.96</td>
+<td class="gt_row gt_right" headers="% Gain">+17.31%</td>
+<td class="gt_row gt_right" headers="Peak Players">164,495</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">February 2014</td>
+<td class="gt_row gt_right" headers="Avg. Players">59,791</td>
+<td class="gt_row gt_right" headers="Gain">4164.01</td>
+<td class="gt_row gt_right" headers="% Gain">+7.49%</td>
+<td class="gt_row gt_right" headers="Peak Players">119,764</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">January 2014</td>
+<td class="gt_row gt_right" headers="Avg. Players">55,627</td>
+<td class="gt_row gt_right" headers="Gain">8839.08</td>
+<td class="gt_row gt_right" headers="% Gain">+18.89%</td>
+<td class="gt_row gt_right" headers="Peak Players">102,084</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">December 2013</td>
+<td class="gt_row gt_right" headers="Avg. Players">46,788</td>
+<td class="gt_row gt_right" headers="Gain">16897.75</td>
+<td class="gt_row gt_right" headers="% Gain">+56.53%</td>
+<td class="gt_row gt_right" headers="Peak Players">96,298</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">November 2013</td>
+<td class="gt_row gt_right" headers="Avg. Players">29,891</td>
+<td class="gt_row gt_right" headers="Gain">1988.38</td>
+<td class="gt_row gt_right" headers="% Gain">+7.13%</td>
+<td class="gt_row gt_right" headers="Peak Players">92,279</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">October 2013</td>
+<td class="gt_row gt_right" headers="Avg. Players">27,902</td>
+<td class="gt_row gt_right" headers="Gain">223.23</td>
+<td class="gt_row gt_right" headers="% Gain">+0.81%</td>
+<td class="gt_row gt_right" headers="Peak Players">53,263</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">September 2013</td>
+<td class="gt_row gt_right" headers="Avg. Players">27,679</td>
+<td class="gt_row gt_right" headers="Gain">1717.06</td>
+<td class="gt_row gt_right" headers="% Gain">+6.61%</td>
+<td class="gt_row gt_right" headers="Peak Players">52,052</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">August 2013</td>
+<td class="gt_row gt_right" headers="Avg. Players">25,962</td>
+<td class="gt_row gt_right" headers="Gain">5469.33</td>
+<td class="gt_row gt_right" headers="% Gain">+26.69%</td>
+<td class="gt_row gt_right" headers="Peak Players">50,511</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">July 2013</td>
+<td class="gt_row gt_right" headers="Avg. Players">20,493</td>
+<td class="gt_row gt_right" headers="Gain">2372.68</td>
+<td class="gt_row gt_right" headers="% Gain">+13.09%</td>
+<td class="gt_row gt_right" headers="Peak Players">42,149</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">June 2013</td>
+<td class="gt_row gt_right" headers="Avg. Players">18,120</td>
+<td class="gt_row gt_right" headers="Gain">-590.50</td>
+<td class="gt_row gt_right" headers="% Gain">-3.16%</td>
+<td class="gt_row gt_right" headers="Peak Players">33,700</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">May 2013</td>
+<td class="gt_row gt_right" headers="Avg. Players">18,710</td>
+<td class="gt_row gt_right" headers="Gain">2704.34</td>
+<td class="gt_row gt_right" headers="% Gain">+16.90%</td>
+<td class="gt_row gt_right" headers="Peak Players">53,379</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">April 2013</td>
+<td class="gt_row gt_right" headers="Avg. Players">16,006</td>
+<td class="gt_row gt_right" headers="Gain">46.11</td>
+<td class="gt_row gt_right" headers="% Gain">+0.29%</td>
+<td class="gt_row gt_right" headers="Peak Players">31,966</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">March 2013</td>
+<td class="gt_row gt_right" headers="Avg. Players">15,960</td>
+<td class="gt_row gt_right" headers="Gain">-1412.84</td>
+<td class="gt_row gt_right" headers="% Gain">-8.13%</td>
+<td class="gt_row gt_right" headers="Peak Players">32,166</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">February 2013</td>
+<td class="gt_row gt_right" headers="Avg. Players">17,373</td>
+<td class="gt_row gt_right" headers="Gain">1208.51</td>
+<td class="gt_row gt_right" headers="% Gain">+7.48%</td>
+<td class="gt_row gt_right" headers="Peak Players">35,238</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">January 2013</td>
+<td class="gt_row gt_right" headers="Avg. Players">16,164</td>
+<td class="gt_row gt_right" headers="Gain">2084.83</td>
+<td class="gt_row gt_right" headers="% Gain">+14.81%</td>
+<td class="gt_row gt_right" headers="Peak Players">31,359</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">December 2012</td>
+<td class="gt_row gt_right" headers="Avg. Players">14,079</td>
+<td class="gt_row gt_right" headers="Gain">-54.71</td>
+<td class="gt_row gt_right" headers="% Gain">-0.39%</td>
+<td class="gt_row gt_right" headers="Peak Players">27,553</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">November 2012</td>
+<td class="gt_row gt_right" headers="Avg. Players">14,134</td>
+<td class="gt_row gt_right" headers="Gain">3394.62</td>
+<td class="gt_row gt_right" headers="% Gain">+31.61%</td>
+<td class="gt_row gt_right" headers="Peak Players">50,533</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">October 2012</td>
+<td class="gt_row gt_right" headers="Avg. Players">10,739</td>
+<td class="gt_row gt_right" headers="Gain">-5261.27</td>
+<td class="gt_row gt_right" headers="% Gain">-32.88%</td>
+<td class="gt_row gt_right" headers="Peak Players">20,850</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">September 2012</td>
+<td class="gt_row gt_right" headers="Avg. Players">16,001</td>
+<td class="gt_row gt_right" headers="Gain">525.36</td>
+<td class="gt_row gt_right" headers="% Gain">+3.39%</td>
+<td class="gt_row gt_right" headers="Peak Players">36,057</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Month">August 2012</td>
+<td class="gt_row gt_right" headers="Avg. Players">15,475</td>
+<td class="gt_row gt_right" headers="Gain">14542.81</td>
+<td class="gt_row gt_right" headers="% Gain">+1559.43%</td>
+<td class="gt_row gt_right" headers="Peak Players">52,261</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Month">July 2012</td>
+<td class="gt_row gt_right" headers="Avg. Players">933</td>
+<td class="gt_row gt_right" headers="Gain">-</td>
+<td class="gt_row gt_right" headers="% Gain">-</td>
+<td class="gt_row gt_right" headers="Peak Players">1,642</td>
+</tr>
+</tbody>
+</table>
+
+</div>
 </div>
 </div>
 
