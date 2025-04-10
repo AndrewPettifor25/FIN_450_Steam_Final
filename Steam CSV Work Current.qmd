@@ -40,7 +40,7 @@ library(kableExtra)
 
 ## What is Counter Strike 2 (CS2) and what are Skins? 
 
-### 1.1 A Billion-Dollar Marketplace Inside a Video Game
+### A Billion-Dollar Marketplace Inside a Video Game
 
 The market capitalization of the *Counter-Strike 2* (CS2) skin economy is currently estimated at between **$3.5 to $4 billion USD**.
 
@@ -48,7 +48,7 @@ This isn’t a typo—and it’s not a standalone app or cryptocurrency. It’s 
 
 This report explores whether CS2 skins and cases can be considered **digital commodities**, using financial data analysis, historical pricing trends, and player activity metrics. But first, it’s necessary to understand what CS2 is, and how its economy works.
 
-### 1.2 What Is Counter-Strike 2 (CS2)?
+### What Is Counter-Strike 2 (CS2)?
 
 *Counter-Strike 2* is the latest installment in Valve’s iconic *Counter-Strike* franchise, officially released in **September 2023**. It serves as the free upgrade and full successor to *Counter-Strike: Global Offensive* (CS:GO), which launched in **2012** and became one of the most successful competitive games in the world.
 
@@ -57,13 +57,13 @@ Built on the **Source 2 engine**, CS2 brings modernized visuals, improved perfor
 ![Counter Strike 2 Logo](https://media.overclock3d.net/2025/02/counter-strike-2.jpg)
 
 
-### 1.3 From Tactical Shooter to Digital Economy
+### From Tactical Shooter to Digital Economy
 
 The roots of CS2’s economy trace back to **CS:GO**, which introduced cosmetic weapon skins in 2013. Skins are purely aesthetic—they do not impact gameplay—but their perceived rarity and visual appeal created a strong demand among players. Over time, skins became **tradable digital collectibles**, giving rise to a **secondary market** where items could command prices ranging from a few cents to **hundreds of thousands of dollars**.
 
 Valve supported this economy by allowing peer-to-peer trades and by creating the **Steam Community Market**, where players could list and sell skins. However, the most valuable trades now often occur **off-platform**, via third-party marketplaces or private transactions.
 
-### 1.4 Understanding the CS2 Skin Market
+### Understanding the CS2 Skin Market
 
 At the core of the CS2 economy are **skins and cases**:
 - **Skins** change the appearance of weapons, gloves, knives, and more.
@@ -87,7 +87,7 @@ Key price drivers include:
 
 For example, a particular AK-47 skin with a rare pattern and Factory New condition might sell for several thousand dollars, especially if used by a famous esports player. These market dynamics are further amplified by **Supply limitations**. (some cases and skins are discontinued, making them more scarce)
 
-### 1.5 A Cultural and Economic Phenomenon
+###  A Cultural and Economic Phenomenon
 
 While CS2 remains a video game at heart, its virtual economy increasingly resembles that of **a real-world financial market**:
 - Items are speculated on, collected, and held for long-term value.
@@ -133,11 +133,10 @@ Ultimately, the analysis will assess if the CS2 item market behaves in a way tha
 
 ## Data Collection and Methodology
 
-## 3. Data Collection & Methodology
 
 This section outlines the methods used to collect, clean, and analyze data from the CS2 skin marketplace and player base. The goal is to establish a financial dataset capable of supporting time series analysis, regression modeling, and forecasting.
 
-### 3.1 Data Sources
+### Data Sources
 
 The dataset used in this analysis combines multiple sources:
 
@@ -150,7 +149,7 @@ The dataset used in this analysis combines multiple sources:
 - **Exchange Rates**:  
   Since Steam listings are in USD and the report is written for a Canadian context, all price data was converted into CAD using daily USD/CAD exchange rates from the Bank of Canada or other reliable sources.
 
-### 3.2 Item Selection Criteria
+### Item Selection Criteria
 
 To ensure a representative and balanced view of the skin market, the analysis focuses on **five popular CS2 cases**, each with **three skins** selected based on weapon type:
 
@@ -546,7 +545,7 @@ case_price_summary_gt %>%
 
 ## Cases vs Skins
 
-
+![Case Drop Odds](https://dmarket.com/blog/cs2-case-odds/cs2%20odds%20percentage.jpg)
 ### Chroma Case vs Skins
 
 ```{r echo=FALSE}
@@ -657,12 +656,27 @@ plot_ly(dnm_df, x = ~date, y = ~price_cad, color = ~Item, type = 'scatter', mode
 
 # Forecasts
 
-### Predicting Tomrrows Price
+
+```{r}
+chroma2_ret_long_for <- chroma2_df %>% 
+  arrange(date, Item) %>% 
+  dplyr::group_by(Item) %>% 
+  dplyr::mutate(return = log(price_cad / dplyr::lag(price_cad))) %>% 
+  na.omit() %>% 
+  transmute(date, Item, return)
+
+chroma2_ret_for <- chroma2_ret_long_for %>% 
+  tidyr::pivot_wider(names_from = Item, values_from = return) %>% 
+  filter(date >= as.Date("2016-01-01")) %>% 
+  na.omit()
+```
+
+### Predicting Tomrrows Price (Daily)
 ```{r echo=FALSE}
 
+# Filter only Chroma 2 Case and prepare modeling data
 model_data <- Daily_CAD_Items %>%
-  filter(Item_Type == "Case") %>%
-  group_by(Item) %>%
+  filter(Item_Type == "Case", Item == "Chroma 2 Case") %>%
   arrange(date) %>%
   mutate(
     price_tomorrow = lead(price_cad),
@@ -670,30 +684,33 @@ model_data <- Daily_CAD_Items %>%
     price_change = price_cad - price_lag_1,
     date_num = as.numeric(date)
   ) %>%
-  drop_na(price_tomorrow, price_lag_1) %>%
-  ungroup()
+  drop_na(price_tomorrow, price_lag_1)
 
+# Train/test split
 set.seed(123)
 split <- initial_split(model_data, prop = 0.8)
 train <- training(split)
 test <- testing(split)
 
+# Recipe with volume added
 price_recipe <- recipe(price_tomorrow ~ price_cad + price_lag_1 + price_change + volume + date_num, data = train) %>%
   step_dummy(all_nominal_predictors()) %>%
   step_normalize(all_numeric_predictors())
 
+# Model definition
 price_model <- linear_reg() %>%
   set_engine("lm")
 
+# Workflow
 price_workflow <- workflow() %>%
   add_recipe(price_recipe) %>%
   add_model(price_model)
 
+# Fit and predict
 price_fit <- fit(price_workflow, data = train)
 
 price_preds <- predict(price_fit, new_data = test) %>%
   bind_cols(test)
-
 
 ```
 
@@ -704,7 +721,7 @@ ggplot(price_preds, aes(x = .pred, y = price_tomorrow)) +
   geom_point(alpha = 0.4, color = "blue") +
   geom_abline(linetype = "dashed", color = "gray") +
   labs(
-    title = "Predicted vs. Actual Price (Next Day)",
+    title = "Predicted vs. Actual Price Chroma 2 Case (Next Day)",
     x = "Predicted Price (CAD)",
     y = "Actual Price (CAD)"
   ) +
@@ -754,7 +771,7 @@ ggplot(price_preds, aes(x = .pred, y = .pred - price_tomorrow)) +
   geom_point(aes(color = abs(.pred - price_tomorrow)), alpha = 0.7, size = 3) +
   scale_color_gradient(low = "steelblue", high = "red", name = "Absolute Error") +
   labs(
-    title = "Residuals vs Predictions (Daily Model)",
+    title = "Residuals vs Predictions Chroma 2 Case (Daily Model)",
     subtitle = "Deviation of Predicted Daily Prices from Actuals",
     x = "Predicted Price (CAD)",
     y = "Residual (Error: Predicted - Actual)"
@@ -766,58 +783,61 @@ ggplot(price_preds, aes(x = .pred, y = .pred - price_tomorrow)) +
     panel.grid.minor = element_blank()
   )
 ```
+### Predicting Next Months Price (Monthly)
 ```{r echo=FALSE}
-# Monthly Forecast
 
-monthly_data <- Daily_CAD_Items %>%
-  filter(Item_Type == "Case") %>%
+
+# Monthly Forecast — Chroma 2 Case only
+monthly_data_chroma2 <- Daily_CAD_Items %>%
+  filter(Item_Type == "Case", Item == "Chroma 2 Case") %>%
   mutate(month = floor_date(date, "month")) %>%
-  group_by(Item, month) %>%
+  group_by(month) %>%
   summarise(
     price_cad = mean(price_cad, na.rm = TRUE),
     .groups = "drop"
   ) %>%
-  arrange(Item, month) %>%
-  group_by(Item) %>%
+  arrange(month) %>%
   mutate(
     price_next_month = lead(price_cad),
     price_last_month = lag(price_cad),
     price_change_month = price_cad - price_last_month,
     month_num = as.numeric(month)
   ) %>%
-  drop_na(price_next_month, price_last_month) %>%
-  ungroup()
+  drop_na(price_next_month, price_last_month)
 
-
+# Train/test split
 set.seed(123)
-split_monthly <- initial_split(monthly_data, prop = 0.8)
-train_monthly <- training(split_monthly)
-test_monthly <- testing(split_monthly)
+split_monthly_chroma2 <- initial_split(monthly_data_chroma2, prop = 0.5)
+train_monthly_chroma2 <- training(split_monthly_chroma2)
+test_monthly_chroma2 <- testing(split_monthly_chroma2)
 
-
-price_recipe_monthly <- recipe(price_next_month ~ price_cad + price_last_month + price_change_month + month_num, data = train_monthly) %>%
+# Recipe
+price_recipe_monthly_chroma2 <- recipe(price_next_month ~ price_cad + price_last_month + price_change_month + month_num, data = train_monthly_chroma2) %>%
   step_dummy(all_nominal_predictors()) %>%
   step_normalize(all_numeric_predictors())
 
-
-price_model_monthly <- linear_reg() %>%
+# Model
+price_model_monthly_chroma2 <- linear_reg() %>%
   set_engine("lm")
 
-price_workflow_monthly <- workflow() %>%
-  add_recipe(price_recipe_monthly) %>%
-  add_model(price_model_monthly)
+# Workflow
+price_workflow_monthly_chroma2 <- workflow() %>%
+  add_recipe(price_recipe_monthly_chroma2) %>%
+  add_model(price_model_monthly_chroma2)
 
-price_fit_monthly <- fit(price_workflow_monthly, data = train_monthly)
+# Fit model
+price_fit_monthly_chroma2 <- fit(price_workflow_monthly_chroma2, data = train_monthly_chroma2)
 
-price_preds_monthly <- predict(price_fit_monthly, new_data = test_monthly) %>%
-  bind_cols(test_monthly)
+# Predict
+price_preds_monthly_chroma2 <- predict(price_fit_monthly_chroma2, new_data = test_monthly_chroma2) %>%
+  bind_cols(test_monthly_chroma2)
 
 
 ```
 
 ```{r echo=FALSE}
 
-ggplot(price_preds_monthly, aes(x = .pred, y = price_next_month)) +
+ggplot(price_preds_monthly_chroma2, aes(x = .pred, y = price_next_month)) +
   geom_point(alpha = 0.4, color = "darkgreen") +
   geom_abline(linetype = "dashed", color = "gray") +
   labs(
@@ -831,7 +851,7 @@ ggplot(price_preds_monthly, aes(x = .pred, y = price_next_month)) +
 
 ```{r echo=FALSE}
 
-price_preds_monthly %>%
+price_preds_monthly_chroma2 %>%
   metrics(truth = price_next_month, estimate = .pred) %>% 
   gt() %>% 
   fmt_number(columns = .estimate, decimals = 5) %>%
@@ -845,8 +865,8 @@ price_preds_monthly %>%
     fn = toupper
   ) %>%
   tab_header(
-    title = "Monthly Price Prediction Model Performance",
-    subtitle = "Linear Regression Forecast for Next-Month Case Prices"
+    title = "Monthly Price Prediction Model Performance — Chroma 2 Case",
+    subtitle = "Linear Regression Forecast for Next-Month Price"
   ) %>%
   tab_style(
     style = cell_text(align = "center"),
@@ -860,12 +880,12 @@ price_preds_monthly %>%
 
 ```{r echo=FALSE}
 
-ggplot(price_preds_monthly, aes(x = .pred, y = .pred - price_next_month)) +
+ggplot(price_preds_monthly_chroma2, aes(x = .pred, y = .pred - price_next_month)) +
   geom_hline(yintercept = 0, color = "gray", linetype = "dashed", size = 0.8) +
   geom_point(aes(color = abs(.pred - price_next_month)), alpha = 0.7, size = 3) +
   scale_color_gradient(low = "steelblue", high = "red", name = "Absolute Error") +
   labs(
-    title = "Residuals vs Predictions",
+    title = "Chroma 2 Case — Residuals vs Predictions",
     subtitle = "Deviation of Monthly Predicted Prices from Actuals",
     x = "Predicted Price (CAD)",
     y = "Residual (Error: Predicted - Actual)"
@@ -876,8 +896,245 @@ ggplot(price_preds_monthly, aes(x = .pred, y = .pred - price_next_month)) +
     plot.title = element_text(face = "bold"),
     panel.grid.minor = element_blank()
   )
+```
+Predicting Tomorrows Returns
+```{r echo=FALSE}
+
+
+daily_ret_data <- chroma2_ret_for %>%
+  select(date, `Chroma 2 Case`) %>%
+  arrange(date) %>%
+  mutate(
+    return_tomorrow = lead(`Chroma 2 Case`),
+    return_yesterday = lag(`Chroma 2 Case`),
+    return_change = `Chroma 2 Case` - return_yesterday,
+    date_num = as.numeric(date)
+  ) %>%
+  drop_na(return_tomorrow, return_yesterday)
+
+
+set.seed(123)
+split_daily_ret <- initial_split(daily_ret_data, prop = 0.8)
+train_daily_ret <- training(split_daily_ret)
+test_daily_ret <- testing(split_daily_ret)
+
+
+recipe_daily_ret <- recipe(return_tomorrow ~ `Chroma 2 Case` + return_yesterday + return_change + date_num, data = train_daily_ret) %>%
+  step_normalize(all_numeric_predictors())
+
+model_daily_ret <- linear_reg() %>%
+  set_engine("lm")
+
+
+workflow_daily_ret <- workflow() %>%
+  add_recipe(recipe_daily_ret) %>%
+  add_model(model_daily_ret)
+
+fit_daily_ret <- fit(workflow_daily_ret, data = train_daily_ret)
+
+preds_daily_ret <- predict(fit_daily_ret, new_data = test_daily_ret) %>%
+  bind_cols(test_daily_ret)
 
 ```
+
+
+
+
+### 📈 Plot: Predicted vs Actual Daily Return
+
+```{r echo=FALSE}
+
+ggplot(preds_daily_ret, aes(x = .pred, y = return_tomorrow)) +
+  geom_point(alpha = 0.5, color = "dodgerblue4") +
+  geom_abline(linetype = "dashed", color = "gray") +
+  labs(
+    title = "Predicted vs Actual Daily Log Return",
+    subtitle = "Chroma 2 Case",
+    x = "Predicted Daily Return",
+    y = "Actual Daily Return"
+  ) +
+  theme_minimal()
+
+```
+
+
+
+###  Table: Model Performance
+
+```{r echo=FALSE}
+
+preds_daily_ret %>%
+  metrics(truth = return_tomorrow, estimate = .pred) %>%
+  gt() %>%
+  fmt_number(columns = .estimate, decimals = 5) %>%
+  cols_label(
+    .metric = "Metric",
+    .estimator = "Estimator",
+    .estimate = "Estimate"
+  ) %>%
+  text_transform(
+    locations = cells_body(columns = .metric),
+    fn = toupper
+  ) %>%
+  tab_header(
+    title = "Model Performance — Daily Return Forecast",
+    subtitle = "Chroma 2 Case (Log Returns)"
+  ) %>%
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(columns = everything())
+  ) %>%
+  tab_style(
+    style = cell_text(weight = "bold"),
+    locations = cells_column_labels(everything())
+  )
+
+```
+
+### 🔍 Residual Plot: Daily Return Forecast
+
+```{r echo=FALSE}
+
+ggplot(preds_daily_ret, aes(x = .pred, y = .pred - return_tomorrow)) +
+  geom_hline(yintercept = 0, color = "gray70", linetype = "dashed") +
+  geom_point(aes(color = abs(.pred - return_tomorrow)), alpha = 0.7, size = 3) +
+  scale_color_gradient(low = "skyblue", high = "firebrick", name = "Absolute Error") +
+  labs(
+    title = "Residuals vs Predictions — Daily Log Return",
+    subtitle = "Error Between Forecasted and Actual Log Return",
+    x = "Predicted Return",
+    y = "Residual (Predicted - Actual)"
+  ) +
+  theme_minimal(base_size = 14)
+```
+
+
+
+Predicting Next Months Returns
+```{r echo=FALSE}
+
+library(tidyverse)
+library(lubridate)
+library(tidymodels)
+library(gt)
+
+# Step 1: Prepare monthly return series
+monthly_ret_chroma2 <- chroma2_ret_for %>%
+  select(date, `Chroma 2 Case`) %>%
+  mutate(month = floor_date(date, "month")) %>%
+  group_by(month) %>%
+  summarise(
+    monthly_return = sum(`Chroma 2 Case`, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  arrange(month) %>%
+  mutate(
+    return_next_month = lead(monthly_return),
+    return_last_month = lag(monthly_return),
+    return_change = monthly_return - return_last_month,
+    month_num = as.numeric(month)
+  ) %>%
+  drop_na(return_next_month, return_last_month)
+
+# Step 2: Train/test split
+set.seed(123)
+split_month_ret <- initial_split(monthly_ret_chroma2, prop = 0.5)
+train_month_ret <- training(split_month_ret)
+test_month_ret <- testing(split_month_ret)
+
+# Step 3: Recipe
+recipe_month_ret <- recipe(return_next_month ~ monthly_return + return_last_month + return_change + month_num, data = train_month_ret) %>%
+  step_normalize(all_numeric_predictors())
+
+# Step 4: Model
+model_month_ret <- linear_reg() %>%
+  set_engine("lm")
+
+# Step 5: Workflow and fit
+workflow_month_ret <- workflow() %>%
+  add_recipe(recipe_month_ret) %>%
+  add_model(model_month_ret)
+
+fit_month_ret <- fit(workflow_month_ret, data = train_month_ret)
+
+# Step 6: Predict
+preds_month_ret <- predict(fit_month_ret, new_data = test_month_ret) %>%
+  bind_cols(test_month_ret)
+
+```
+
+
+
+### Plot: Predicted vs Actual Monthly Return
+
+```{r echo=FALSE}
+
+ggplot(preds_month_ret, aes(x = .pred, y = return_next_month)) +
+  geom_point(alpha = 0.5, color = "darkorange") +
+  geom_abline(linetype = "dashed", color = "gray") +
+  labs(
+    title = "Predicted vs Actual Monthly Return",
+    subtitle = "Chroma 2 Case (Log Return)",
+    x = "Predicted Monthly Return",
+    y = "Actual Monthly Return"
+  ) +
+  theme_minimal()
+
+```
+
+
+
+### Table: Model Performance Metrics
+```{r echo=FALSE}
+
+preds_month_ret %>%
+  metrics(truth = return_next_month, estimate = .pred) %>%
+  gt() %>%
+  fmt_number(columns = .estimate, decimals = 5) %>%
+  cols_label(
+    .metric = "Metric",
+    .estimator = "Estimator",
+    .estimate = "Estimate"
+  ) %>%
+  text_transform(
+    locations = cells_body(columns = .metric),
+    fn = toupper
+  ) %>%
+  tab_header(
+    title = "Model Performance — Chroma 2 Case Returns",
+    subtitle = "Monthly Log Return Forecast"
+  ) %>%
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(columns = everything())
+  ) %>%
+  tab_style(
+    style = cell_text(weight = "bold"),
+    locations = cells_column_labels(everything())
+  )
+
+```
+
+
+
+
+### Residual Plot: Return Forecast
+```{r echo=FALSE}
+
+ggplot(preds_month_ret, aes(x = .pred, y = .pred - return_next_month)) +
+  geom_hline(yintercept = 0, color = "gray70", linetype = "dashed", size = 0.8) +
+  geom_point(aes(color = abs(.pred - return_next_month)), alpha = 0.7, size = 3) +
+  scale_color_gradient(low = "skyblue", high = "firebrick", name = "Absolute Error") +
+  labs(
+    title = "Residuals vs Predictions — Monthly Log Return",
+    subtitle = "Error Between Forecasted and Actual Log Return",
+    x = "Predicted Return",
+    y = "Residual (Predicted - Actual)"
+  ) +
+  theme_minimal(base_size = 14)
+
+```
+
 
 ```{r echo=FALSE}
 vol_data <- Daily_CAD_Items %>%
@@ -1029,7 +1286,7 @@ model <- prophet(glove_case_df,
   weekly.seasonality = TRUE,
   daily.seasonality = FALSE)
 
-future <- make_future_dataframe(model, periods = 30)
+future <- make_future_dataframe(model, periods = 180)
 forecast <- predict(model, future)
 
 plot(model, forecast) +
@@ -1058,13 +1315,13 @@ price_wide <- Daily_CAD_Items %>%
 returns_wide <- price_wide %>%
   arrange(date) %>%
   mutate(
-    ret_chroma_2 = log(`Chroma 2 Case` / lag(`Chroma 2 Case`)),
+    ret_chroma_2_v2 = log(`Chroma 2 Case` / lag(`Chroma 2 Case`)),
     ret_chroma   = log(`Chroma Case` / lag(`Chroma Case`)) ,
     ret_dreams   = log(`Dreams & Nightmares Case` / lag(`Dreams & Nightmares Case`)),
     ret_gamma    = log(`Gamma Case` / lag(`Gamma Case`)) ,
     ret_glove    = log(`Glove Case` / lag(`Glove Case`)) 
   ) %>% 
-  mutate(case_portfolio = (0.2 * ret_chroma_2 +
+  mutate(case_portfolio = (0.2 * ret_chroma_2_v2 +
                      0.2 * ret_chroma +
                      0.2 * ret_dreams +
                      0.2 * ret_gamma +
