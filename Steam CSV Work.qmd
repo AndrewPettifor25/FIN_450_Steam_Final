@@ -126,11 +126,63 @@ Ultimately, the analysis will assess if the CS2 item market behaves in a way tha
 
 ## Data Collection and Methodology
 
+## 3. Data Collection & Methodology
 
+This section outlines the methods used to collect, clean, and analyze data from the CS2 skin marketplace and player base. The goal is to establish a financial dataset capable of supporting time series analysis, regression modeling, and forecasting.
 
+### 3.1 Data Sources
 
+The dataset used in this analysis combines multiple sources:
 
+- **Steam Community Market**:  
+  Prices of selected CS2 cases and skins were scraped using `RSelenium` to access JavaScript-rendered charts on the Steam Marketplace.
 
+- **CS2 Player Counts**:  
+  Daily and monthly player count data were collected using `rvest` from Steam Charts, providing a proxy for market demand and player engagement.
+
+- **Exchange Rates**:  
+  Since Steam listings are in USD and the report is written for a Canadian context, all price data was converted into CAD using daily USD/CAD exchange rates from the Bank of Canada or other reliable sources.
+
+### 3.2 Item Selection Criteria
+
+To ensure a representative and balanced view of the skin market, the analysis focuses on **five popular CS2 cases**, each with **three skins** selected based on weapon type:
+
+- **Pistol**
+- **Rifle**
+- **Special/Random**
+
+The following cases and skins were selected:
+
+**Chroma Case**
+- Glock-18 | Catacombs (Minimal Wear)
+- AK-47 | Cartel (Minimal Wear)
+- AWP | Man-o'-war (Minimal Wear)
+
+**Chroma 2 Case**
+- USP-S | Torque (Minimal Wear)
+- M4A1-S | Hyper Beast (Minimal Wear)
+- AWP | Worm God (Minimal Wear)
+
+**Gamma Case**
+- Glock-18 | Wasteland Rebel (Minimal Wear)
+- M4A4 | Desolate Space (Minimal Wear)
+- AWP | Phobos (Minimal Wear)
+
+**Glove Case**
+- USP-S | Cyrex (Minimal Wear)
+- M4A4 | Buzz Kill (Minimal Wear)
+- P90 | Shallow Grave (Minimal Wear)
+
+**Dreams & Nightmares Case**
+- USP-S | Ticket to Hell (Minimal Wear)
+- AK-47 | Nightwish (Minimal Wear)
+- MP9 | Starlight Protector (Minimal Wear)
+
+**These cases were chosen to reflect diversity in:**
+- Release date (from legacy to modern CS2-compatible cases)
+- Price history depth
+- Popularity and market activity
+- Skin types and categories
 
 
 ```{r echo=FALSE}
@@ -561,8 +613,9 @@ plot_ly(dnm_df, x = ~date, y = ~price_cad, color = ~Item, type = 'scatter', mode
 
 # Forecasts
 
-```{r}
-# Create lagged and lead prices
+### Predicting Tomrrows Price
+```{r echo=FALSE}
+
 model_data <- Daily_CAD_Items %>%
   filter(Item_Type == "Case") %>%
   group_by(Item) %>%
@@ -576,34 +629,27 @@ model_data <- Daily_CAD_Items %>%
   drop_na(price_tomorrow, price_lag_1) %>%
   ungroup()
 
-# Data split
 set.seed(123)
 split <- initial_split(model_data, prop = 0.8)
 train <- training(split)
 test <- testing(split)
 
-# Recipe
-price_recipe <- recipe(price_tomorrow ~ price_cad + price_lag_1 + price_change + volume + date_num + Item, data = train) %>%
+price_recipe <- recipe(price_tomorrow ~ price_cad + price_lag_1 + price_change + volume + date_num, data = train) %>%
   step_dummy(all_nominal_predictors()) %>%
   step_normalize(all_numeric_predictors())
 
-# Model spec
 price_model <- linear_reg() %>%
   set_engine("lm")
 
-# Workflow
 price_workflow <- workflow() %>%
   add_recipe(price_recipe) %>%
   add_model(price_model)
 
-# Fit
 price_fit <- fit(price_workflow, data = train)
 
-# Predict
 price_preds <- predict(price_fit, new_data = test) %>%
   bind_cols(test)
 
-# Evaluate
 price_preds %>%
   metrics(truth = price_tomorrow, estimate = .pred)
 
@@ -611,10 +657,10 @@ price_preds %>%
 
 ```
 
-```{r}
-# Plot predicted vs actual prices
+```{r echo=FALSE}
+
 ggplot(price_preds, aes(x = .pred, y = price_tomorrow)) +
-  geom_point(alpha = 0.4, color = "#1f77b4") +
+  geom_point(alpha = 0.4, color = "blue") +
   geom_abline(linetype = "dashed", color = "gray") +
   labs(
     title = "Predicted vs. Actual Price (Next Day)",
@@ -625,11 +671,11 @@ ggplot(price_preds, aes(x = .pred, y = price_tomorrow)) +
 
 
 
+
 ```
 
 
-```{r}
-# Add 7-day rolling volatility
+```{r echo=FALSE}
 vol_data <- Daily_CAD_Items %>%
   filter(Item_Type == "Case") %>%
   group_by(Item) %>%
@@ -643,31 +689,29 @@ vol_data <- Daily_CAD_Items %>%
   drop_na(volatility_7d, price_lag_1) %>%
   ungroup()
 
-# Data split
 set.seed(456)
 vol_split <- initial_split(vol_data, prop = 0.8)
 vol_train <- training(vol_split)
 vol_test <- testing(vol_split)
 
-# Recipe
+
 vol_recipe <- recipe(volatility_7d ~ price_cad + price_change + volume + date_num + Item, data = vol_train) %>%
   step_dummy(all_nominal_predictors()) %>%
   step_normalize(all_numeric_predictors())
 
-# Model spec
+
 vol_model <- boost_tree(trees = 500, tree_depth = 6) %>%
   set_engine("xgboost") %>%
   set_mode("regression")
 
-# Workflow
+
 vol_workflow <- workflow() %>%
   add_recipe(vol_recipe) %>%
   add_model(vol_model)
 
-# Fit
 vol_fit <- fit(vol_workflow, data = vol_train)
 
-# Predict + metrics
+
 vol_preds <- predict(vol_fit, new_data = vol_test) %>%
   bind_cols(vol_test)
 
@@ -677,10 +721,10 @@ vol_preds %>%
 ```
 
 
-```{r}
+```{r echo=FALSE}
 # Plot predicted vs actual volatility
 ggplot(vol_preds, aes(x = .pred, y = volatility_7d)) +
-  geom_point(alpha = 0.4, color = "#ff7f0e") +
+  geom_point(alpha = 0.4, color = "orange") +
   geom_abline(linetype = "dashed", color = "gray") +
   labs(
     title = "Predicted vs. Actual 7-Day Volatility",
@@ -688,6 +732,87 @@ ggplot(vol_preds, aes(x = .pred, y = volatility_7d)) +
     y = "Actual Volatility (CAD)"
   ) +
   theme_minimal()
+
+
+```
+
+
+### Cases Portfolio vs the market
+```{r echo=FALSE}
+
+price_wide <- Daily_CAD_Items %>%
+  filter(Item_Type == "Case") %>%
+  filter(Item %in% c("Chroma 2 Case", "Chroma Case", "Dreams & Nightmares Case", "Gamma Case", "Glove Case")) %>%
+  select(date, Item, price_cad) %>%
+  pivot_wider(names_from = Item, values_from = price_cad) %>%
+  drop_na()  # Removes rows with any NA
+
+returns_wide <- price_wide %>%
+  arrange(date) %>%
+  mutate(
+    ret_chroma_2 = log(`Chroma 2 Case` / lag(`Chroma 2 Case`)),
+    ret_chroma   = log(`Chroma Case` / lag(`Chroma Case`)) ,
+    ret_dreams   = log(`Dreams & Nightmares Case` / lag(`Dreams & Nightmares Case`)),
+    ret_gamma    = log(`Gamma Case` / lag(`Gamma Case`)) ,
+    ret_glove    = log(`Glove Case` / lag(`Glove Case`)) 
+  ) %>% 
+  mutate(case_portfolio = (0.2 * ret_chroma_2 +
+                     0.2 * ret_chroma +
+                     0.2 * ret_dreams +
+                     0.2 * ret_gamma +
+                     0.2 * ret_glove)
+         ) 
+
+symbols <- c("GLD", "DBC")  
+
+case_portfolio <- returns_wide %>% 
+  select(date, case_portfolio) %>% 
+  mutate(date = as.Date(date))
+
+commodity_returns <- tq_get(symbols,
+                            from = "2022-01-21",
+                            to = max(returns_wide$date)) %>%
+  group_by(symbol) %>%
+  tq_transmute(
+    select     = adjusted,
+    mutate_fun = periodReturn,
+    period     = "daily",
+    type       = "log",  
+    col_rename = "daily_return"
+  ) %>%
+  ungroup()
+
+commodity_wide <- commodity_returns %>%
+  pivot_wider(names_from = symbol, values_from = daily_return)
+
+
+comparison_df <- case_portfolio %>%
+  left_join(commodity_wide, by = "date") %>%
+  drop_na()  
+
+cumulative_returns <- comparison_df %>%
+  mutate(
+    cum_case = exp(cumsum(case_portfolio)),
+    cum_GLD  = exp(cumsum(GLD)),
+    cum_DBC  = exp(cumsum(DBC))
+  ) %>%
+  select(date, cum_case, cum_GLD, cum_DBC) %>%
+  pivot_longer(-date, names_to = "Asset", values_to = "Cumulative_Return")
+```
+
+```{r echo=FALSE}
+plotly::ggplotly(
+  ggplot(cumulative_returns, aes(x = date, y = Cumulative_Return, color = Asset)) +
+    geom_line(linewidth = 1.2) +
+    labs(
+      title = "Cumulative Returns: CS:GO Case Portfolio vs. GLD & DBC",
+      subtitle = "Log Return Basis | Since 2022-01-21",
+      x = "Date",
+      y = "Growth of $1",
+      color = "Asset"
+    ) +
+    theme_minimal()
+)
 
 
 ```
