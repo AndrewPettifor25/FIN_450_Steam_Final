@@ -1,0 +1,1093 @@
+---
+title: "Please God"
+author: "Andrew"
+format: html
+editor: visual
+---
+```{r setup, include=FALSE}
+library(RSelenium)
+library(jsonlite)
+library(stringr)
+library(dplyr)
+library(lubridate)
+library(ggplot2)
+library(tidyr)
+library(tidyverse)
+library(tidyquant)
+library(readr)
+library(plotly)
+library(gt)
+library(purrr)
+library(recipes)
+library(parsnip)
+library(tidymodels)
+library(slider)
+library(rvest)
+library(DT)
+library(prophet)
+```
+## Executive Summary
+
+(Insert Later)
+
+## What is Counter Strike 2 (CS2) and what are Skins? 
+
+### 1.1 A Billion-Dollar Marketplace Inside a Video Game
+
+The market capitalization of the *Counter-Strike 2* (CS2) skin economy is currently estimated at between **$3.5 to $4 billion USD**.
+
+This isn’t a typo—and it’s not a standalone app or cryptocurrency. It’s a digital marketplace built entirely within a free-to-play multiplayer video game, where cosmetic virtual items known as "skins" are bought, sold, and traded like speculative assets. What began as a niche feature in a tactical shooter has evolved into a global financial ecosystem—one that increasingly resembles commodity or alternative asset markets.
+
+This report explores whether CS2 skins and cases can be considered **digital commodities**, using financial data analysis, historical pricing trends, and player activity metrics. But first, it’s necessary to understand what CS2 is, and how its economy works.
+
+### 1.2 What Is Counter-Strike 2 (CS2)?
+
+*Counter-Strike 2* is the latest installment in Valve’s iconic *Counter-Strike* franchise, officially released in **September 2023**. It serves as the free upgrade and full successor to *Counter-Strike: Global Offensive* (CS:GO), which launched in **2012** and became one of the most successful competitive games in the world.
+
+Built on the **Source 2 engine**, CS2 brings modernized visuals, improved performance, and refined gameplay to a fan base that has been active for over two decades. While gameplay revolves around 5v5 tactical gunfights and objective control, the game is also home to a surprisingly sophisticated **virtual item economy**.
+
+![Counter Strike 2 Logo](https://media.overclock3d.net/2025/02/counter-strike-2.jpg)
+
+
+### 1.3 From Tactical Shooter to Digital Economy
+
+The roots of CS2’s economy trace back to **CS:GO**, which introduced cosmetic weapon skins in 2013. Skins are purely aesthetic—they do not impact gameplay—but their perceived rarity and visual appeal created a strong demand among players. Over time, skins became **tradable digital collectibles**, giving rise to a **secondary market** where items could command prices ranging from a few cents to **hundreds of thousands of dollars**.
+
+Valve supported this economy by allowing peer-to-peer trades and by creating the **Steam Community Market**, where players could list and sell skins. However, the most valuable trades now often occur **off-platform**, via third-party marketplaces or private transactions.
+
+### 1.4 Understanding the CS2 Skin Market
+
+At the core of the CS2 economy are **skins and cases**:
+- **Skins** change the appearance of weapons, gloves, knives, and more.
+- **Cases** are loot boxes that contain a randomized selection of skins, which can only be unlocked with paid keys.
+
+Key price drivers include:
+
+- **Rarity Tier** (e.g., Covert, Classified, Rare Special Items)
+
+- **Float Value**: A numerical indicator of wear, from Factory New to Battle-Scarred
+
+- **Pattern Index**: Unique variations in skin texture, which can drastically affect value
+
+- **Design & Popularity**: Visual appeal, collector interest, and usage by streamers or professional players
+
+- **Game Updates**: Buffs/nerfs to weapons or visual engine changes can increase or decrease demand
+
+![Rarity Tiers](https://prosettings.net/cdn-cgi/image/dpr=1%2Cf=auto%2Cfit=cover%2Ch=358%2Cq=95%2Cw=720/wp-content/uploads/cs2-skin-rarity-tiers.png)
+
+<img src="https://www.example.com/image.jpg" width="500">
+
+For example, a particular AK-47 skin with a rare pattern and Factory New condition might sell for several thousand dollars, especially if used by a famous esports player. These market dynamics are further amplified by **Supply limitations**. (some cases and skins are discontinued, making them more scarce)
+
+### 1.5 A Cultural and Economic Phenomenon
+
+While CS2 remains a video game at heart, its virtual economy increasingly resembles that of **a real-world financial market**:
+- Items are speculated on, collected, and held for long-term value.
+- Players and traders monitor **price charts**, **market sentiment**, and **economic indicators**.
+- There is an active secondary market with:
+  
+  - **Price arbitrage**
+  
+  - **Volatility**
+ 
+  - **Liquidity differences** across platforms
+
+For many participants, CS2 skins are more than just digital flair—they are **digital assets**, with price behavior mimicking that of commodities like precious metals or collectibles like sports cards. The total market size, user engagement, and asset performance over time all point to a maturing virtual economy worthy of financial analysis.
+
+
+
+
+## Research Objective
+
+
+The objective of this report is to evaluate whether **CS2 skins and cases** can be considered **digital commodities** by analyzing their market behavior, price dynamics, and interaction with player demand.
+
+In traditional finance, commodities are defined as **fungible, tradable goods** with value driven by supply, demand, scarcity, and market speculation. As the CS2 marketplace has evolved, skins and cases have begun to display similar economic behaviors, including:
+
+- Price volatility based on external events and updates  
+- Speculative trading and "holding" behavior  
+- Supply constraints and deflationary design (e.g., discontinued drops)  
+- A robust, decentralized secondary market with arbitrage opportunities  
+- Community-driven valuation mechanisms  
+
+This report applies financial techniques such as **time series analysis**, **regression modeling**, and **forecasting** to:
+
+- Track historical price changes of selected CS2 cases and skins  
+- Compare skin and case performance over time  
+- Analyze correlations between market prices and player base activity  
+- Model the price determinants of digital items  
+- Predict future trends using player activity and item performance data  
+
+By quantifying these variables, the report aims to determine whether these digital items exhibit the economic traits of **emerging speculative assets** or **true digital commodities**, or if they should be viewed through a different financial lens—such as collectibles or high-risk digital goods.
+
+Ultimately, the analysis will assess if the CS2 item market behaves in a way that warrants its comparison to established commodity markets, and what implications this might have for the broader field of finance and digital asset investment.
+
+
+## Data Collection and Methodology
+
+## 3. Data Collection & Methodology
+
+This section outlines the methods used to collect, clean, and analyze data from the CS2 skin marketplace and player base. The goal is to establish a financial dataset capable of supporting time series analysis, regression modeling, and forecasting.
+
+### 3.1 Data Sources
+
+The dataset used in this analysis combines multiple sources:
+
+- **Steam Community Market**:  
+  Prices of selected CS2 cases and skins were scraped using `RSelenium` to access JavaScript-rendered charts on the Steam Marketplace.
+
+- **CS2 Player Counts**:  
+  Daily and monthly player count data were collected using `rvest` from Steam Charts, providing a proxy for market demand and player engagement.
+
+- **Exchange Rates**:  
+  Since Steam listings are in USD and the report is written for a Canadian context, all price data was converted into CAD using daily USD/CAD exchange rates from the Bank of Canada or other reliable sources.
+
+### 3.2 Item Selection Criteria
+
+To ensure a representative and balanced view of the skin market, the analysis focuses on **five popular CS2 cases**, each with **three skins** selected based on weapon type:
+
+- **Pistol**
+- **Rifle**
+- **Special/Random**
+
+The following cases and skins were selected:
+
+**Chroma Case**
+- Glock-18 | Catacombs (Minimal Wear)
+- AK-47 | Cartel (Minimal Wear)
+- AWP | Man-o'-war (Minimal Wear)
+
+**Chroma 2 Case**
+- USP-S | Torque (Minimal Wear)
+- M4A1-S | Hyper Beast (Minimal Wear)
+- AWP | Worm God (Minimal Wear)
+
+**Gamma Case**
+- Glock-18 | Wasteland Rebel (Minimal Wear)
+- M4A4 | Desolate Space (Minimal Wear)
+- AWP | Phobos (Minimal Wear)
+
+**Glove Case**
+- USP-S | Cyrex (Minimal Wear)
+- M4A4 | Buzz Kill (Minimal Wear)
+- P90 | Shallow Grave (Minimal Wear)
+
+**Dreams & Nightmares Case**
+- USP-S | Ticket to Hell (Minimal Wear)
+- AK-47 | Nightwish (Minimal Wear)
+- MP9 | Starlight Protector (Minimal Wear)
+
+**These cases were chosen to reflect diversity in:**
+- Release date (from legacy to modern CS2-compatible cases)
+- Price history depth
+- Popularity and market activity
+- Skin types and categories
+
+
+```{r echo=FALSE}
+
+cases <- c(
+  "Chroma Case", "Chroma 2 Case", "Gamma Case","Glove Case","Dreams & Nightmares Case"
+)
+
+case_skins <- list(
+  "Chroma Case" = c(
+    "Glock-18 | Catacombs (Minimal Wear)",           # pistol
+    "AK-47 | Cartel (Minimal Wear)",                 # rifle
+    "AWP | Man-o'-war (Minimal Wear)"                # AWP
+  ),
+  "Chroma 2 Case" = c(
+    "USP-S | Torque (Minimal Wear)",                 # pistol
+    "M4A1-S | Hyper Beast (Minimal Wear)",           # rifle
+    "AWP | Worm God (Minimal Wear)"                  # AWP
+  ),
+  "Gamma Case" = c(
+    "Glock-18 | Wasteland Rebel (Minimal Wear)",     # pistol
+    "M4A4 | Desolate Space (Minimal Wear)",          # rifle
+    "AWP | Phobos (Minimal Wear)"                    # AWP-preferred random
+  ),
+  "Glove Case" = c(
+    "USP-S | Cyrex (Minimal Wear)",                  # pistol
+    "M4A4 | Buzz Kill (Minimal Wear)",               # rifle
+    "P90 | Shallow Grave (Minimal Wear)"             # random
+  ),
+  "Dreams & Nightmares Case" = c(
+    "USP-S | Ticket to Hell (Minimal Wear)",         # pistol
+    "AK-47 | Nightwish (Minimal Wear)",              # rifle
+    "MP9 | Starlight Protector (Minimal Wear)"       # random
+  )
+)
+
+# Optinal Additional Cases
+casesfinal <- c(
+  "Chroma Case", "Chroma 2 Case", "Falchion Case", "Shadow Case",
+  "Revolver Case", "Operation Wildfire Case", "Chroma 3 Case",
+  "Gamma Case", "Gamma 2 Case", "Glove Case", "Spectrum Case",
+  "Operation Hydra Case", "Spectrum 2 Case", "Clutch Case", 
+  "Horizon Case", "Danger Zone Case", "Prisma Case", "CS20 Case", 
+  "Shattered Web Case", "Prisma 2 Case", "Fracture Case", 
+  "Operation Broken Fang Case", "Snakebite Case", 
+  "Operation Riptide Case", "Dreams & Nightmares Case", 
+  "Recoil Case", "Revolution Case", "Kilowatt Case", "Gallery Case"
+  
+)
+
+
+```
+
+
+```{r}
+# Add a random delay function
+random_delay <- function(min_seconds = 10, max_seconds = 30) {
+  delay_time <- runif(1, min_seconds, max_seconds)
+  message(paste("Waiting for", round(delay_time, 1), "seconds..."))
+  Sys.sleep(delay_time)
+}
+
+# Updated function to scrape case data with random delay
+scrape_case_chart_data <- function(case_name, remDr, min_wait = 10, max_wait = 30) {
+  encoded_case <- URLencode(case_name)
+  url <- paste0("https://steamcommunity.com/market/listings/730/", encoded_case)
+
+  message(paste("Scraping case:", case_name))
+  remDr$navigate(url)
+  
+  # Apply random delay
+  random_delay(min_wait, max_wait)
+
+  html <- remDr$getPageSource()[[1]]
+  html_clean <- gsub("[\r\n\t]", "", html)
+
+  pattern <- "var line1=\\[(\\[.*?\\])\\];"
+  matches <- stringr::str_match(html_clean, pattern)
+
+  if (is.na(matches[2])) {
+    message(paste("❌ Could not extract line1 for:", case_name))
+    return(NULL)
+  }
+
+  json_array <- paste0("[", matches[2], "]")
+
+  chart_data <- tryCatch({
+    fromJSON(json_array)
+  }, error = function(e) {
+    message(paste("❌ JSON parse error for", case_name, ":", e$message))
+    return(NULL)
+  })
+
+  num_cols <- ncol(chart_data)
+
+  df <- tibble(
+    time = chart_data[, 1],
+    price_usd = as.numeric(chart_data[, 2]),
+    volume = if (num_cols >= 3) as.numeric(chart_data[, 3]) else NA_real_
+  ) %>%
+    mutate(
+      time_clean = str_remove(time, " \\+0$"),
+      date = parse_date_time(time_clean, orders = "b d Y H", tz = "UTC"),
+      Case = case_name,
+      Item_Type = "Case"
+    ) %>%
+    select(Case, Item_Type, date, price_usd, volume) %>%
+    filter(!is.na(date))
+  
+  message(paste("✓ Successfully scraped data for:", case_name, "with", nrow(df), "data points"))
+  return(df)
+}
+
+# Updated function to scrape skin data with random delay
+scrape_skin_chart_data <- function(skin_name, remDr, min_wait = 10, max_wait = 30) {
+  encoded_skin <- URLencode(skin_name)
+  url <- paste0("https://steamcommunity.com/market/listings/730/", encoded_skin)
+
+  message(paste("Scraping skin:", skin_name))
+  remDr$navigate(url)
+  
+  # Apply random delay
+  random_delay(min_wait, max_wait)
+
+  html <- remDr$getPageSource()[[1]]
+  html_clean <- gsub("[\r\n\t]", "", html)
+
+  pattern <- "var line1=\\[(\\[.*?\\])\\];"
+  matches <- stringr::str_match(html_clean, pattern)
+
+  if (is.na(matches[2])) {
+    message(paste("❌ Could not extract line1 for:", skin_name))
+    return(NULL)
+  }
+
+  json_array <- paste0("[", matches[2], "]")
+
+  chart_data <- tryCatch({
+    fromJSON(json_array)
+  }, error = function(e) {
+    message(paste("❌ JSON parse error for", skin_name, ":", e$message))
+    return(NULL)
+  })
+
+  num_cols <- ncol(chart_data)
+
+  df <- tibble(
+    time = chart_data[, 1],
+    price_usd = as.numeric(chart_data[, 2]),
+    volume = if (num_cols >= 3) as.numeric(chart_data[, 3]) else NA_real_
+  ) %>%
+    mutate(
+      time_clean = str_remove(time, " \\+0$"),
+      date = parse_date_time(time_clean, orders = "b d Y H", tz = "UTC"),
+      Skin = skin_name,
+      # Extract the case name from which this skin belongs
+      Case = names(case_skins)[sapply(case_skins, function(x) skin_name %in% x)],
+      Item_Type = "Skin"
+    ) %>%
+    select(Case, Skin, Item_Type, date, price_usd, volume) %>%
+    filter(!is.na(date))
+  
+  message(paste("✓ Successfully scraped data for:", skin_name, "with", nrow(df), "data points"))
+  return(df)
+}
+
+# Updated main scraping code with longer delays between items
+# Flatten the case_skins list to get all skin names
+all_skins <- unlist(case_skins)
+
+# Start the RSelenium server
+rD <- rsDriver(browser = "firefox", chromever = NULL, verbose = FALSE)
+remDr <- rD$client
+
+# 1. First scrape all cases
+message("Starting case scraping...")
+all_cases_data <- list()
+for (case_name in cases) {
+  case_data <- scrape_case_chart_data(case_name, remDr)
+  if (!is.null(case_data)) {
+    all_cases_data[[length(all_cases_data) + 1]] <- case_data
+  }
+  # Add extra delay between items
+  random_delay(15, 40)
+}
+all_cases_data <- bind_rows(all_cases_data)
+message(paste("Completed scraping cases"))
+
+# 2. Then scrape all skins
+message("Starting skin scraping...")
+all_skins_data <- list()
+for (skin_name in all_skins) {
+  skin_data <- scrape_skin_chart_data(skin_name, remDr)
+  if (!is.null(skin_data)) {
+    all_skins_data[[length(all_skins_data) + 1]] <- skin_data
+  }
+  # Add extra delay between items
+  random_delay(15, 40)
+}
+all_skins_data <- bind_rows(all_skins_data)
+message(paste("Completed scraping skins"))
+
+# Stop RSelenium
+remDr$close()
+rD$server$stop()
+```
+
+```{r echo=FALSE}
+# Filtering and Cleaning
+
+all_skins_data_for_combine <- all_skins_data %>%
+  rename(Item = Skin) %>%
+  select(Case, Item, Item_Type, date, price_usd, volume)
+
+all_cases_data_for_combine <- all_cases_data %>%
+  mutate(Item = Case) %>%
+  select(Case, Item, Item_Type, date, price_usd, volume)
+
+all_items_data <- bind_rows(all_cases_data_for_combine, all_skins_data_for_combine)
+
+all_items_data_clean <- all_items_data %>% 
+  mutate(date = as.POSIXct(date, tz = "UTC"))
+
+daily_item_closes <- all_items_data_clean %>%
+  mutate(
+    hour = hour(date),
+    day = as.Date(date)
+  ) %>%
+  filter(hour == 1) %>%  # Keep only rows with time == 1:00
+  group_by(Case, Item, Item_Type, day) %>%  # In case multiple entries at 1:00
+  slice_max(order_by = date, n = 1) %>%
+  ungroup() %>%
+  select(Case, Item, Item_Type, date, price_usd, volume) %>%
+  arrange(Case, Item, date)
+
+past_month_items <- all_items_data_clean %>%
+  filter(date >= Sys.Date() - months(1)) %>%
+  group_by(Case, Item, Item_Type) %>%
+  arrange(date) %>%
+  slice(-1) %>%  #
+  ungroup()
+
+```
+
+```{r echo=FALSE}
+# USD-CAD Exchange 
+
+fx_usdcad <- tq_get("CAD=X", get = "stock.prices", from = "2010-01-01")
+
+fx_usdcad_clean <- fx_usdcad %>%
+  select(date, fx_rate = close)
+
+fx_usdcad_filled <- fx_usdcad_clean %>%
+  complete(date = seq.Date(min(date), max(date), by = "day")) %>%
+  fill(fx_rate, .direction = "down")
+
+```
+
+```{r echo=FALSE}
+#Filtering and Cleaning for CAD
+
+CAD_Converted_Items <- all_items_data_clean %>%
+  mutate(date_only = as.Date(date)) %>%
+  left_join(fx_usdcad_filled, by = c("date_only" = "date")) %>%
+  mutate(price_cad = price_usd * fx_rate) %>% 
+  drop_na()
+
+CAD_Selected_Items <- CAD_Converted_Items %>% 
+  select(Case, Item, Item_Type, date, price_cad, volume)
+```
+
+```{r echo=FALSE}
+#Filtering and Cleaning for CAD
+
+Daily_CAD_Items <- CAD_Selected_Items %>%
+  mutate(
+    hour = hour(date),
+    day = as.Date(date)
+  ) %>%
+  filter(hour == 1) %>%  # Keep only rows with time == 1:00
+  group_by(Case, Item, Item_Type, day) %>%  # In case multiple entries at 1:00
+  slice_max(order_by = date, n = 1) %>%
+  ungroup() %>%
+  select(Case, Item, Item_Type, date, price_cad, volume) %>%
+  arrange(Case, Item, date)
+```
+
+```{r echo=FALSE}
+#Filtering and Cleaning for CAD
+
+Month_CAD_Items <- CAD_Selected_Items %>%
+  filter(date >= Sys.Date() - months(1)) %>%
+  group_by(Case, Item, Item_Type) %>%
+  arrange(date) %>%
+  slice(-1) %>%  # removes the first row of each group
+  ungroup()
+```
+
+
+```{r echo=FALSE}
+cases_data <- all_items_data_clean %>% filter(Item_Type == "Case")
+skins_data <- all_items_data_clean %>% filter(Item_Type == "Skin")
+
+```
+
+
+
+## Market Overview
+```{r echo=FALSE}
+# Steam Player Count Scrape
+scrape_steamcharts <- function() {
+  url <- "https://steamcharts.com/app/730"
+  
+  page <- read_html(url)
+  
+  steam_data <- page %>%
+    html_element("table.common-table") %>%
+    html_table()
+  
+  return(steam_data)
+}
+
+steam_data <- scrape_steamcharts()
+
+steam_data_formatted <- steam_data %>%
+  mutate(
+    `Avg. Players` = comma(`Avg. Players`),
+    `Peak Players` = comma(`Peak Players`)
+  )
+```
+
+
+
+```{r echo=FALSE}
+# Steam Player Count Bar Chart
+
+steam_data_march <- steam_data %>%
+  filter(Month != "Last 30 Days" & grepl("^March", Month)) %>%
+  mutate(
+    Year = sub(".* ", "", Month),
+    `Avg. Players` = as.numeric(`Avg. Players`)
+  ) %>%
+  arrange(as.numeric(Year))
+
+steam_data_plot <- steam_data_march %>% 
+  select(Year, `Peak Players`, `Avg. Players`)
+
+
+plot_ly(steam_data_plot, x = ~Year) %>%
+  add_trace(
+    y = ~`Avg. Players`,
+    name = 'Avg. Players',
+    type = 'bar'
+  ) %>%
+  add_trace(
+    y = ~`Peak Players`,
+    name = 'Peak Players',
+    type = 'bar'
+  ) %>%
+  layout(
+    barmode = 'group',
+    title = "CS:GO -> CS2 Player Counts by Year",
+    xaxis = list(title = "Year"),
+    yaxis = list(title = "Number of Players")
+    
+  )
+
+```
+
+```{r echo=FALSE}
+# Steam Player Count Data Table
+
+datatable(
+  steam_data_formatted,
+  options = list(
+    pageLength = 10,
+    autoWidth = TRUE)
+  )
+```
+
+## Analysis of Cases
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+cases_only <- Daily_CAD_Items %>%
+  filter(Item_Type == "Case", Case %in% cases)  
+
+plot_ly(cases_only, x = ~date, y = ~price_cad, color = ~Item, type = 'scatter', mode = 'lines') %>%
+  layout(
+    title = "Cases Price Comparison Over Time (CAD)",
+    xaxis = list(title = "Date"),
+    yaxis = list(title = "Price (CAD)"),
+    legend = list(orientation = "h", y = -0.2)
+  )
+
+
+
+```
+
+
+
+```{r echo=FALSE}
+# Filtering and Cleaning
+
+avg_last_month <- Month_CAD_Items %>%
+  filter(Item_Type == "Case", Item %in% cases) %>%
+  group_by(Item) %>%
+  summarise(avg_last_month = mean(price_cad, na.rm = TRUE))
+
+case_inceptions <- Daily_CAD_Items %>%
+  filter(Item_Type == "Case", Item %in% cases) %>%
+  group_by(Item) %>%
+  summarise(inception_date = min(date))
+
+avg_inception_month <- Daily_CAD_Items %>%
+  filter(Item_Type == "Case", Item %in% cases) %>%
+  left_join(case_inceptions, by = "Item") %>%
+  filter(date >= inception_date & date <= inception_date + days(30)) %>%
+  group_by(Item) %>%
+  summarise(avg_inception = mean(price_cad, na.rm = TRUE))
+
+avg_six_months_later <- Daily_CAD_Items %>%
+  filter(Item_Type == "Case", Item %in% cases) %>%
+  left_join(case_inceptions, by = "Item") %>%
+  filter(date >= inception_date + months(6) & date <= inception_date + months(7)) %>%
+  group_by(Item) %>%
+  summarise(avg_six_month = mean(price_cad, na.rm = TRUE))
+
+case_price_summary_gt <- avg_last_month %>%
+  left_join(avg_inception_month, by = "Item") %>%
+  left_join(avg_six_months_later, by = "Item") %>%
+  mutate(
+    change_from_inception = avg_last_month - avg_inception,
+    change_from_six_month = avg_last_month - avg_six_month
+  )
+
+case_price_summary_gt %>%
+  gt() %>%
+  fmt_number(columns = where(is.numeric), decimals = 2) %>%
+  tab_header(
+    title = "Case Price Comparison in CAD",
+    subtitle = "Comparing Last Month Avg vs Inception & 6-Month Post-Inception"
+  ) %>%
+  cols_label(
+    Item = "Case",
+    avg_inception = "Avg at Inception (CAD)",
+    avg_six_month = "Avg at +6 Months (CAD)",
+    avg_last_month = "Avg at Last Month (CAD)",
+    change_from_inception = "Change vs Inception",
+    change_from_six_month = "Change vs +6 Months"
+  ) %>%
+  data_color(
+    columns = vars(change_from_inception, change_from_six_month),
+    colors = scales::col_numeric(palette = c( "white", "green"), domain = NULL)
+  ) %>%
+  tab_style(
+    style = cell_text(weight = "bold"),
+    locations = cells_column_labels(everything())
+  )
+
+
+```
+
+## Cases vs Skins
+
+
+### Chroma Case vs Skins
+
+```{r echo=FALSE}
+chroma_items <- c("Chroma Case",
+                  "Glock-18 | Catacombs (Minimal Wear)",
+                  "AK-47 | Cartel (Minimal Wear)",
+                  "AWP | Man-o'-war (Minimal Wear)")
+
+chroma_df <- Daily_CAD_Items %>%
+  filter(Item %in% chroma_items)
+
+plot_ly(chroma_df, x = ~date, y = ~price_cad, color = ~Item, type = 'scatter', mode = 'lines') %>%
+  layout(
+    title = "Chroma Case vs Skins - Price Over Time (CAD)",
+    xaxis = list(title = "Date"),
+    yaxis = list(title = "Price (CAD)"),
+legend = list(orientation = "h", y = -0.2)   )
+
+
+
+```
+
+### Chroma 2 vs Skins
+
+```{r echo=FALSE}
+
+chroma2_items <- c("Chroma 2 Case",
+                   "USP-S | Torque (Minimal Wear)",
+                   "M4A1-S | Hyper Beast (Minimal Wear)",
+                   "AWP | Worm God (Minimal Wear)")
+
+chroma2_df <- Daily_CAD_Items %>%
+  filter(Item %in% chroma2_items)
+
+plot_ly(chroma2_df, x = ~date, y = ~price_cad, color = ~Item, type = 'scatter', mode = 'lines') %>%
+  layout(
+    title = "Chroma 2 Case vs Skins - Price Over Time (CAD)",
+    xaxis = list(title = "Date"),
+    yaxis = list(title = "Price (CAD)"),
+legend = list(orientation = "h", y = -0.2)   )
+
+```
+
+### Gamma Case vs Skins
+
+```{r echo=FALSE}
+gamma_items <- c("Gamma Case",
+                 "Glock-18 | Wasteland Rebel (Minimal Wear)",
+                 "M4A4 | Desolate Space (Minimal Wear)",
+                 "AWP | Phobos (Minimal Wear)")
+
+gamma_df <- Daily_CAD_Items %>%
+  filter(Item %in% gamma_items)
+
+plot_ly(gamma_df, x = ~date, y = ~price_cad, color = ~Item, type = 'scatter', mode = 'lines') %>%
+  layout(
+    title = "Gamma Case vs Skins - Price Over Time (CAD)",
+    xaxis = list(title = "Date"),
+    yaxis = list(title = "Price (CAD)"),
+legend = list(orientation = "h", y = -0.2)   )
+
+
+```
+
+### Glove Case vs Skins
+
+```{r echo=FALSE}
+glove_items <- c("Glove Case",
+                 "USP-S | Cyrex (Minimal Wear)",
+                 "M4A4 | Buzz Kill (Minimal Wear)",
+                 "P90 | Shallow Grave (Minimal Wear)")
+
+glove_df <- Daily_CAD_Items %>%
+  filter(Item %in% glove_items)
+
+plot_ly(glove_df, x = ~date, y = ~price_cad, color = ~Item, type = 'scatter', mode = 'lines') %>%
+  layout(
+    title = "Glove Case vs Skins - Price Over Time (CAD)",
+    xaxis = list(title = "Date"),
+    yaxis = list(title = "Price (CAD)"),
+legend = list(orientation = "h", y = -0.2)   )
+
+
+```
+
+### Dreams & Nightmares Case vs Skins
+
+```{r echo=FALSE}
+dnm_items <- c("Dreams & Nightmares Case",
+               "USP-S | Ticket to Hell (Minimal Wear)",
+               "AK-47 | Nightwish (Minimal Wear)",
+               "MP9 | Starlight Protector (Minimal Wear)")
+
+dnm_df <- Daily_CAD_Items %>%
+  filter(Item %in% dnm_items)
+
+plot_ly(dnm_df, x = ~date, y = ~price_cad, color = ~Item, type = 'scatter', mode = 'lines') %>%
+  layout(
+    title = "Dreams & Nightmares Case vs Skins - Price Over Time (CAD)",
+    xaxis = list(title = "Date"),
+    yaxis = list(title = "Price (CAD)"),
+    legend = list(orientation = "h", y = -0.2) 
+  )
+
+
+```
+
+
+# Forecasts
+
+### Predicting Tomrrows Price
+```{r echo=FALSE}
+
+model_data <- Daily_CAD_Items %>%
+  filter(Item_Type == "Case") %>%
+  group_by(Item) %>%
+  arrange(date) %>%
+  mutate(
+    price_tomorrow = lead(price_cad),
+    price_lag_1 = lag(price_cad),
+    price_change = price_cad - price_lag_1,
+    date_num = as.numeric(date)
+  ) %>%
+  drop_na(price_tomorrow, price_lag_1) %>%
+  ungroup()
+
+set.seed(123)
+split <- initial_split(model_data, prop = 0.8)
+train <- training(split)
+test <- testing(split)
+
+price_recipe <- recipe(price_tomorrow ~ price_cad + price_lag_1 + price_change + volume + date_num, data = train) %>%
+  step_dummy(all_nominal_predictors()) %>%
+  step_normalize(all_numeric_predictors())
+
+price_model <- linear_reg() %>%
+  set_engine("lm")
+
+price_workflow <- workflow() %>%
+  add_recipe(price_recipe) %>%
+  add_model(price_model)
+
+price_fit <- fit(price_workflow, data = train)
+
+price_preds <- predict(price_fit, new_data = test) %>%
+  bind_cols(test)
+
+
+```
+
+
+```{r echo=FALSE}
+
+ggplot(price_preds, aes(x = .pred, y = price_tomorrow)) +
+  geom_point(alpha = 0.4, color = "blue") +
+  geom_abline(linetype = "dashed", color = "gray") +
+  labs(
+    title = "Predicted vs. Actual Price (Next Day)",
+    x = "Predicted Price (CAD)",
+    y = "Actual Price (CAD)"
+  ) +
+  theme_minimal()
+
+
+
+
+```
+
+```{r echo=FALSE}
+price_preds%>%
+  metrics(truth = price_tomorrow, estimate = .pred) %>% 
+  gt() %>% 
+  fmt_number(columns = .estimate, decimals = 5) %>%
+  cols_label(
+    .metric = "Metric",
+    .estimator = "Estimator",
+    .estimate = "Estimate"
+  ) %>%
+  text_transform(
+    locations = cells_body(columns = .metric),
+    fn = toupper
+  ) %>%
+  tab_header(
+    title = "Price Prediction Model Performance",
+    subtitle = "Linear Regression Forecast for Next-Day Case Prices"
+  ) %>%
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(columns = everything())
+  ) %>%
+  tab_style(
+    style = cell_text(weight = "bold"),
+    locations = cells_column_labels(everything())
+  )
+
+
+
+
+```
+
+```{r echo=FALSE}
+vol_data <- Daily_CAD_Items %>%
+  filter(Item_Type == "Case") %>%
+  group_by(Item) %>%
+  arrange(date) %>%
+  mutate(
+    volatility_7d = slide_dbl(price_cad, sd, .before = 6, .complete = TRUE),
+    price_lag_1 = lag(price_cad),
+    price_change = price_cad - price_lag_1,
+    date_num = as.numeric(date)
+  ) %>%
+  drop_na(volatility_7d, price_lag_1) %>%
+  ungroup()
+set.seed(456)
+vol_split <- initial_split(vol_data, prop = 0.8)
+vol_train <- training(vol_split)
+vol_test <- testing(vol_split)
+
+vol_recipe <- recipe(volatility_7d ~ price_cad + price_change + volume + date_num, data = vol_train) %>%
+  step_dummy(all_nominal_predictors()) %>%
+  step_normalize(all_numeric_predictors())
+
+
+
+vol_model <- boost_tree(trees = 500, tree_depth = 6) %>%
+  set_engine("xgboost") %>%
+  set_mode("regression")
+
+vol_workflow <- workflow() %>%
+  add_recipe(vol_recipe) %>%
+  add_model(vol_model)
+
+vol_fit <- fit(vol_workflow, data = vol_train)
+
+
+vol_preds <- predict(vol_fit, new_data = vol_test) %>%
+  bind_cols(vol_test)
+
+```
+
+
+```{r echo=FALSE}
+# Plot predicted vs actual volatility
+ggplot(vol_preds, aes(x = .pred, y = volatility_7d)) +
+  geom_point(alpha = 0.4, color = "orange") +
+  geom_abline(linetype = "dashed", color = "gray") +
+  labs(
+    title = "Predicted vs. Actual 7-Day Volatility",
+    x = "Predicted Volatility (CAD)",
+    y = "Actual Volatility (CAD)"
+  ) +
+  theme_minimal()
+
+```
+
+```{r}
+vol_preds %>%
+  metrics(truth = volatility_7d, estimate = .pred) %>% 
+  gt()%>%
+  fmt_number(columns = .estimate, decimals = 5) %>%
+  cols_label(
+    .metric = "Metric",
+    .estimator = "Estimator",
+    .estimate = "Estimate"
+  ) %>%
+  text_transform(
+    locations = cells_body(columns = .metric),
+    fn = toupper
+  ) %>%
+  tab_header(
+    title = "Volatility Model Performance Metrics",
+    subtitle = "7-Day Volatility Forecast"
+  ) %>%
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(columns = everything())
+  ) %>%
+  tab_style(
+    style = cell_text(weight = "bold"),
+    locations = cells_column_labels(everything())
+  )
+
+```
+### Player Forecasts
+
+```{r echo=FALSE}
+
+# Prepare data
+steam_forecast_data <- steam_data_march %>%
+  mutate(Year = as.numeric(Year))
+
+# Fit linear model
+player_lm <- lm(`Peak Players` ~ Year, data = steam_forecast_data)
+
+# Forecast future years
+future_years <- data.frame(Year = max(steam_forecast_data$Year) + 1:5)
+
+# Predict
+future_preds <- future_years %>%
+  mutate(`Peak Players` = predict(player_lm, newdata = future_years)) %>%
+  mutate(Type = "Forecast")
+
+# Historic data
+historic_players <- steam_forecast_data %>%
+  select(Year, `Peak Players`) %>%
+  mutate(Type = "Historical")
+
+# Combine
+players_combined <- bind_rows(historic_players, future_preds)
+
+# Ensure Type is a factor or character
+players_combined$Type <- as.character(players_combined$Type)
+```
+
+```{r echo=FALSE}
+
+plot_ly() %>%
+  add_trace(data = historic_players,
+            x = ~Year, y = ~`Peak Players`,
+            name = "Historical",
+            type = "scatter", mode = "lines+markers",
+            line = list(color = "blue", width = 3),
+            marker = list(size = 6)) %>%
+  add_trace(data = future_preds,
+            x = ~Year, y = ~`Peak Players`,
+            name = "Forecast",
+            type = "scatter", mode = "lines+markers",
+            line = list(color = "red", width = 3, dash = 'dash'),
+            marker = list(size = 6, symbol = "circle-open")) %>%
+  layout(
+    title = list(text = "<b>Forecast of CS2 Peak Players</b>", x = 0),
+    xaxis = list(title = "Year", tickformat = ".0f"),
+    yaxis = list(title = "Average Players"),
+    legend = list(x = 0.05, y = 0.95, bgcolor = "rgba(255,255,255,0.5)")
+  )
+
+```
+```{r echo=FALSE}
+
+glove_case_df <- Daily_CAD_Items %>%
+  filter(Item == "Glove Case") %>%
+  select(ds = date, y = price_cad) %>%
+  arrange(ds)
+
+
+model <- prophet(glove_case_df,
+  yearly.seasonality = TRUE,
+  weekly.seasonality = TRUE,
+  daily.seasonality = FALSE)
+
+future <- make_future_dataframe(model, periods = 30)
+forecast <- predict(model, future)
+
+plot(model, forecast) +
+  ggtitle("Prophet Forecast for Glove Case Price") +
+  xlab("Date") + ylab("Price (CAD)")
+
+prophet_plot_components(model, forecast)
+
+
+
+
+```
+
+
+### Cases Portfolio vs the market
+```{r echo=FALSE}
+
+# Cases vs the Markets
+price_wide <- Daily_CAD_Items %>%
+  filter(Item_Type == "Case") %>%
+  filter(Item %in% c("Chroma 2 Case", "Chroma Case", "Dreams & Nightmares Case", "Gamma Case", "Glove Case")) %>%
+  select(date, Item, price_cad) %>%
+  pivot_wider(names_from = Item, values_from = price_cad) %>%
+  drop_na()  # Removes rows with any NA
+
+returns_wide <- price_wide %>%
+  arrange(date) %>%
+  mutate(
+    ret_chroma_2 = log(`Chroma 2 Case` / lag(`Chroma 2 Case`)),
+    ret_chroma   = log(`Chroma Case` / lag(`Chroma Case`)) ,
+    ret_dreams   = log(`Dreams & Nightmares Case` / lag(`Dreams & Nightmares Case`)),
+    ret_gamma    = log(`Gamma Case` / lag(`Gamma Case`)) ,
+    ret_glove    = log(`Glove Case` / lag(`Glove Case`)) 
+  ) %>% 
+  mutate(case_portfolio = (0.2 * ret_chroma_2 +
+                     0.2 * ret_chroma +
+                     0.2 * ret_dreams +
+                     0.2 * ret_gamma +
+                     0.2 * ret_glove)
+         ) 
+
+symbols <- c("GLD", "SPY")  
+
+case_portfolio <- returns_wide %>% 
+  select(date, case_portfolio) %>% 
+  mutate(date = as.Date(date))
+
+commodity_returns <- tq_get(symbols,
+                            from = "2022-01-21",
+                            to = max(returns_wide$date)) %>%
+  group_by(symbol) %>%
+  tq_transmute(
+    select     = adjusted,
+    mutate_fun = periodReturn,
+    period     = "daily",
+    type       = "log",  
+    col_rename = "daily_return"
+  ) %>%
+  ungroup()
+
+commodity_wide <- commodity_returns %>%
+  pivot_wider(names_from = symbol, values_from = daily_return)
+
+
+comparison_df <- case_portfolio %>%
+  left_join(commodity_wide, by = "date") %>%
+  drop_na()  
+
+cumulative_returns <- comparison_df %>%
+  mutate(
+    cum_case = exp(cumsum(case_portfolio)),
+    cum_GLD  = exp(cumsum(GLD)),
+    cum_SPY  = exp(cumsum(SPY))
+  ) %>%
+  select(date, cum_case, cum_GLD, cum_SPY) %>%
+  pivot_longer(-date, names_to = "Asset", values_to = "Cumulative_Return")
+```
+
+```{r echo=FALSE}
+plotly::ggplotly(
+  ggplot(cumulative_returns, aes(x = date, y = Cumulative_Return, color = Asset)) +
+    geom_line(linewidth = 1.2) +
+    labs(
+      title = "Cumulative Returns: CS2 Case Portfolio vs. GLD & SPY",
+      subtitle = "Log Return Basis | Since 2022-01-21",
+      x = "Date",
+      y = "Growth of $1",
+      color = "Asset"
+    ) +
+    theme_minimal()
+)
+
+
+```
