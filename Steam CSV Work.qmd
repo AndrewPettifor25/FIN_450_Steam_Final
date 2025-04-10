@@ -650,12 +650,9 @@ price_fit <- fit(price_workflow, data = train)
 price_preds <- predict(price_fit, new_data = test) %>%
   bind_cols(test)
 
-price_preds %>%
-  metrics(truth = price_tomorrow, estimate = .pred)
-
-
 
 ```
+
 
 ```{r echo=FALSE}
 
@@ -674,6 +671,13 @@ ggplot(price_preds, aes(x = .pred, y = price_tomorrow)) +
 
 ```
 
+```{r echo=FALSE}
+price_preds%>%
+  metrics(truth = price_tomorrow, estimate = .pred) %>% gt()
+
+
+
+```
 
 ```{r echo=FALSE}
 vol_data <- Daily_CAD_Items %>%
@@ -688,22 +692,20 @@ vol_data <- Daily_CAD_Items %>%
   ) %>%
   drop_na(volatility_7d, price_lag_1) %>%
   ungroup()
-
 set.seed(456)
 vol_split <- initial_split(vol_data, prop = 0.8)
 vol_train <- training(vol_split)
 vol_test <- testing(vol_split)
 
-
-vol_recipe <- recipe(volatility_7d ~ price_cad + price_change + volume + date_num + Item, data = vol_train) %>%
+vol_recipe <- recipe(volatility_7d ~ price_cad + price_change + volume + date_num, data = vol_train) %>%
   step_dummy(all_nominal_predictors()) %>%
   step_normalize(all_numeric_predictors())
+
 
 
 vol_model <- boost_tree(trees = 500, tree_depth = 6) %>%
   set_engine("xgboost") %>%
   set_mode("regression")
-
 
 vol_workflow <- workflow() %>%
   add_recipe(vol_recipe) %>%
@@ -714,9 +716,6 @@ vol_fit <- fit(vol_workflow, data = vol_train)
 
 vol_preds <- predict(vol_fit, new_data = vol_test) %>%
   bind_cols(vol_test)
-
-vol_preds %>%
-  metrics(truth = volatility_7d, estimate = .pred)
 
 ```
 
@@ -733,6 +732,12 @@ ggplot(vol_preds, aes(x = .pred, y = volatility_7d)) +
   ) +
   theme_minimal()
 
+```
+
+```{r}
+vol_preds %>%
+  metrics(truth = volatility_7d, estimate = .pred) %>% 
+  gt()
 
 ```
 
@@ -740,6 +745,7 @@ ggplot(vol_preds, aes(x = .pred, y = volatility_7d)) +
 ### Cases Portfolio vs the market
 ```{r echo=FALSE}
 
+# Cases vs the Markets
 price_wide <- Daily_CAD_Items %>%
   filter(Item_Type == "Case") %>%
   filter(Item %in% c("Chroma 2 Case", "Chroma Case", "Dreams & Nightmares Case", "Gamma Case", "Glove Case")) %>%
@@ -763,7 +769,7 @@ returns_wide <- price_wide %>%
                      0.2 * ret_glove)
          ) 
 
-symbols <- c("GLD", "DBC")  
+symbols <- c("GLD", "SPY")  
 
 case_portfolio <- returns_wide %>% 
   select(date, case_portfolio) %>% 
@@ -794,9 +800,9 @@ cumulative_returns <- comparison_df %>%
   mutate(
     cum_case = exp(cumsum(case_portfolio)),
     cum_GLD  = exp(cumsum(GLD)),
-    cum_DBC  = exp(cumsum(DBC))
+    cum_SPY  = exp(cumsum(SPY))
   ) %>%
-  select(date, cum_case, cum_GLD, cum_DBC) %>%
+  select(date, cum_case, cum_GLD, cum_SPY) %>%
   pivot_longer(-date, names_to = "Asset", values_to = "Cumulative_Return")
 ```
 
@@ -805,7 +811,7 @@ plotly::ggplotly(
   ggplot(cumulative_returns, aes(x = date, y = Cumulative_Return, color = Asset)) +
     geom_line(linewidth = 1.2) +
     labs(
-      title = "Cumulative Returns: CS:GO Case Portfolio vs. GLD & DBC",
+      title = "Cumulative Returns: CS2 Case Portfolio vs. GLD & SPY",
       subtitle = "Log Return Basis | Since 2022-01-21",
       x = "Date",
       y = "Growth of $1",
