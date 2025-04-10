@@ -1,5 +1,5 @@
 ---
-title: "Steam CSV Work"
+title: "Speculation and Scarcity: Evaluating CS2 Skins and Cases as Digital Commodities"
 author: "Andrew"
 format: html
 ---
@@ -26,16 +26,107 @@ library(rvest)
 library(DT)
 ```
 
-Layout Summary:
 
-1. What is CS2
-2. Why is CS2 Still booming
-3. What are Cases and what are skins?
-4. How do we define and measure the value of a skin
-5. Examining Cases and Skins as an investment. 
-6. What are the relations between skins and cases? 
-7. Can we predict the future prices of skins.
-8. What can we take away from this. 
+## Executive Summary
+
+(Insert Later)
+
+## What is Counter Strike 2 (CS2) and what are Skins? 
+
+### 1.1 A Billion-Dollar Marketplace Inside a Video Game
+
+The market capitalization of the *Counter-Strike 2* (CS2) skin economy is currently estimated at between **$3.5 to $4 billion USD**.
+
+This isn’t a typo—and it’s not a standalone app or cryptocurrency. It’s a digital marketplace built entirely within a free-to-play multiplayer video game, where cosmetic virtual items known as "skins" are bought, sold, and traded like speculative assets. What began as a niche feature in a tactical shooter has evolved into a global financial ecosystem—one that increasingly resembles commodity or alternative asset markets.
+
+This report explores whether CS2 skins and cases can be considered **digital commodities**, using financial data analysis, historical pricing trends, and player activity metrics. But first, it’s necessary to understand what CS2 is, and how its economy works.
+
+### 1.2 What Is Counter-Strike 2 (CS2)?
+
+*Counter-Strike 2* is the latest installment in Valve’s iconic *Counter-Strike* franchise, officially released in **September 2023**. It serves as the free upgrade and full successor to *Counter-Strike: Global Offensive* (CS:GO), which launched in **2012** and became one of the most successful competitive games in the world.
+
+Built on the **Source 2 engine**, CS2 brings modernized visuals, improved performance, and refined gameplay to a fan base that has been active for over two decades. While gameplay revolves around 5v5 tactical gunfights and objective control, the game is also home to a surprisingly sophisticated **virtual item economy**.
+
+![Alt text](https://media.overclock3d.net/2025/02/counter-strike-2.jpg)
+
+
+### 1.3 From Tactical Shooter to Digital Economy
+
+The roots of CS2’s economy trace back to **CS:GO**, which introduced cosmetic weapon skins in 2013. Skins are purely aesthetic—they do not impact gameplay—but their perceived rarity and visual appeal created a strong demand among players. Over time, skins became **tradable digital collectibles**, giving rise to a **secondary market** where items could command prices ranging from a few cents to **hundreds of thousands of dollars**.
+
+Valve supported this economy by allowing peer-to-peer trades and by creating the **Steam Community Market**, where players could list and sell skins. However, the most valuable trades now often occur **off-platform**, via third-party marketplaces or private transactions.
+
+### 1.4 Understanding the CS2 Skin Market
+
+At the core of the CS2 economy are **skins and cases**:
+- **Skins** change the appearance of weapons, gloves, knives, and more.
+- **Cases** are loot boxes that contain a randomized selection of skins, which can only be unlocked with paid keys.
+
+Key price drivers include:
+
+- **Rarity Tier** (e.g., Covert, Classified, Rare Special Items)
+
+- **Float Value**: A numerical indicator of wear, from Factory New to Battle-Scarred
+
+- **Pattern Index**: Unique variations in skin texture, which can drastically affect value
+
+- **Design & Popularity**: Visual appeal, collector interest, and usage by streamers or professional players
+
+- **Game Updates**: Buffs/nerfs to weapons or visual engine changes can increase or decrease demand
+
+![Alt text](https://prosettings.net/cdn-cgi/image/dpr=1%2Cf=auto%2Cfit=cover%2Ch=358%2Cq=95%2Cw=720/wp-content/uploads/cs2-skin-rarity-tiers.png)
+
+<img src="https://www.example.com/image.jpg" width="500">
+
+For example, a particular AK-47 skin with a rare pattern and Factory New condition might sell for several thousand dollars, especially if used by a famous esports player. These market dynamics are further amplified by **Supply limitations**. (some cases and skins are discontinued, making them more scarce)
+
+### 1.5 A Cultural and Economic Phenomenon
+
+While CS2 remains a video game at heart, its virtual economy increasingly resembles that of **a real-world financial market**:
+- Items are speculated on, collected, and held for long-term value.
+- Players and traders monitor **price charts**, **market sentiment**, and **economic indicators**.
+- There is an active secondary market with:
+  
+  - **Price arbitrage**
+  
+  - **Volatility**
+ 
+  - **Liquidity differences** across platforms
+
+For many participants, CS2 skins are more than just digital flair—they are **digital assets**, with price behavior mimicking that of commodities like precious metals or collectibles like sports cards. The total market size, user engagement, and asset performance over time all point to a maturing virtual economy worthy of financial analysis.
+
+
+
+
+## Research Objective
+
+
+The objective of this report is to evaluate whether **CS2 skins and cases** can be considered **digital commodities** by analyzing their market behavior, price dynamics, and interaction with player demand.
+
+In traditional finance, commodities are defined as **fungible, tradable goods** with value driven by supply, demand, scarcity, and market speculation. As the CS2 marketplace has evolved, skins and cases have begun to display similar economic behaviors, including:
+
+- Price volatility based on external events and updates  
+- Speculative trading and "holding" behavior  
+- Supply constraints and deflationary design (e.g., discontinued drops)  
+- A robust, decentralized secondary market with arbitrage opportunities  
+- Community-driven valuation mechanisms  
+
+This report applies financial techniques such as **time series analysis**, **regression modeling**, and **forecasting** to:
+
+- Track historical price changes of selected CS2 cases and skins  
+- Compare skin and case performance over time  
+- Analyze correlations between market prices and player base activity  
+- Model the price determinants of digital items  
+- Predict future trends using player activity and item performance data  
+
+By quantifying these variables, the report aims to determine whether these digital items exhibit the economic traits of **emerging speculative assets** or **true digital commodities**, or if they should be viewed through a different financial lens—such as collectibles or high-risk digital goods.
+
+Ultimately, the analysis will assess if the CS2 item market behaves in a way that warrants its comparison to established commodity markets, and what implications this might have for the broader field of finance and digital asset investment.
+
+
+## Data Collection and Methodology
+
+
 
 
 
@@ -202,8 +293,8 @@ skins_data <- all_items_data_clean %>% filter(Item_Type == "Skin")
 ```
 
 
-# Steam Player Count
 
+## Market Overview
 ```{r echo=FALSE}
 # Steam Player Count Scrape
 scrape_steamcharts <- function() {
@@ -275,9 +366,8 @@ datatable(
     autoWidth = TRUE)
   )
 ```
-# Visualizations
 
-## Cases
+## Analysis of Cases
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
 cases_only <- Daily_CAD_Items %>%
   filter(Item_Type == "Case", Case %in% cases)  
