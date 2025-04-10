@@ -1,15 +1,32 @@
 ---
-title: "Ultra Simple"
+title: "Steam Player Count"
 author: "Andrew"
 format: html
 editor: visual
 ---
 
 ```{r}
-library(rvest)
+
+library(RSelenium)
+library(jsonlite)
+library(stringr)
 library(dplyr)
+library(lubridate)
+library(ggplot2)
+library(tidyr)
+library(tidyverse)
+library(tidyquant)
+library(readr)
+library(plotly)
 library(gt)
+library(purrr)
+library(recipes)
+library(parsnip)
+library(tidymodels)
+library(slider)
+library(rvest)
 library(DT)
+
 
 scrape_steamcharts <- function() {
   url <- "https://steamcharts.com/app/730"
@@ -32,13 +49,10 @@ steam_data_formatted <- steam_data %>%
   )
 ```
 
-
-
 ```{r}
 library(dplyr)
 library(plotly)
 
-# Step 1: Filter out "Last 30 Days" and keep only March data
 steam_data_march <- steam_data %>%
   filter(Month != "Last 30 Days" & grepl("^March", Month)) %>%
   mutate(
@@ -50,7 +64,6 @@ steam_data_march <- steam_data %>%
 steam_data_plot <- steam_data_march %>% 
   select(Year, `Peak Players`, `Avg. Players`)
 
-# Create grouped bar chart
 plot_ly(steam_data_plot, x = ~Year) %>%
   add_trace(
     y = ~`Avg. Players`,
@@ -71,9 +84,6 @@ plot_ly(steam_data_plot, x = ~Year) %>%
   )
 
 ```
-
-
-
 
 ```{r}
 
