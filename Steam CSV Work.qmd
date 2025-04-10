@@ -24,6 +24,7 @@ library(tidymodels)
 library(slider)
 library(rvest)
 library(DT)
+library(prophet)
 ```
 
 
@@ -47,7 +48,7 @@ This report explores whether CS2 skins and cases can be considered **digital com
 
 Built on the **Source 2 engine**, CS2 brings modernized visuals, improved performance, and refined gameplay to a fan base that has been active for over two decades. While gameplay revolves around 5v5 tactical gunfights and objective control, the game is also home to a surprisingly sophisticated **virtual item economy**.
 
-![Alt text](https://media.overclock3d.net/2025/02/counter-strike-2.jpg)
+![Counter Strike 2 Logo](https://media.overclock3d.net/2025/02/counter-strike-2.jpg)
 
 
 ### 1.3 From Tactical Shooter to Digital Economy
@@ -74,7 +75,7 @@ Key price drivers include:
 
 - **Game Updates**: Buffs/nerfs to weapons or visual engine changes can increase or decrease demand
 
-![Alt text](https://prosettings.net/cdn-cgi/image/dpr=1%2Cf=auto%2Cfit=cover%2Ch=358%2Cq=95%2Cw=720/wp-content/uploads/cs2-skin-rarity-tiers.png)
+![Rarity Tiers](https://prosettings.net/cdn-cgi/image/dpr=1%2Cf=auto%2Cfit=cover%2Ch=358%2Cq=95%2Cw=720/wp-content/uploads/cs2-skin-rarity-tiers.png)
 
 <img src="https://www.example.com/image.jpg" width="500">
 
@@ -400,7 +401,7 @@ plot_ly(steam_data_plot, x = ~Year) %>%
   ) %>%
   layout(
     barmode = 'group',
-    title = "CS:GO March Player Counts by Year",
+    title = "CS:GO -> CS2 Player Counts by Year",
     xaxis = list(title = "Year"),
     yaxis = list(title = "Number of Players")
     
@@ -673,7 +674,31 @@ ggplot(price_preds, aes(x = .pred, y = price_tomorrow)) +
 
 ```{r echo=FALSE}
 price_preds%>%
-  metrics(truth = price_tomorrow, estimate = .pred) %>% gt()
+  metrics(truth = price_tomorrow, estimate = .pred) %>% 
+  gt() %>% 
+  fmt_number(columns = .estimate, decimals = 5) %>%
+  cols_label(
+    .metric = "Metric",
+    .estimator = "Estimator",
+    .estimate = "Estimate"
+  ) %>%
+  text_transform(
+    locations = cells_body(columns = .metric),
+    fn = toupper
+  ) %>%
+  tab_header(
+    title = "Price Prediction Model Performance",
+    subtitle = "Linear Regression Forecast for Next-Day Case Prices"
+  ) %>%
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(columns = everything())
+  ) %>%
+  tab_style(
+    style = cell_text(weight = "bold"),
+    locations = cells_column_labels(everything())
+  )
+
 
 
 
@@ -737,7 +762,109 @@ ggplot(vol_preds, aes(x = .pred, y = volatility_7d)) +
 ```{r}
 vol_preds %>%
   metrics(truth = volatility_7d, estimate = .pred) %>% 
-  gt()
+  gt()%>%
+  fmt_number(columns = .estimate, decimals = 5) %>%
+  cols_label(
+    .metric = "Metric",
+    .estimator = "Estimator",
+    .estimate = "Estimate"
+  ) %>%
+  text_transform(
+    locations = cells_body(columns = .metric),
+    fn = toupper
+  ) %>%
+  tab_header(
+    title = "Volatility Model Performance Metrics",
+    subtitle = "7-Day Volatility Forecast"
+  ) %>%
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(columns = everything())
+  ) %>%
+  tab_style(
+    style = cell_text(weight = "bold"),
+    locations = cells_column_labels(everything())
+  )
+
+```
+### Player Forecasts
+
+```{r echo=FALSE}
+
+# Prepare data
+steam_forecast_data <- steam_data_march %>%
+  mutate(Year = as.numeric(Year))
+
+# Fit linear model
+player_lm <- lm(`Peak Players` ~ Year, data = steam_forecast_data)
+
+# Forecast future years
+future_years <- data.frame(Year = max(steam_forecast_data$Year) + 1:5)
+
+# Predict
+future_preds <- future_years %>%
+  mutate(`Peak Players` = predict(player_lm, newdata = future_years)) %>%
+  mutate(Type = "Forecast")
+
+# Historic data
+historic_players <- steam_forecast_data %>%
+  select(Year, `Peak Players`) %>%
+  mutate(Type = "Historical")
+
+# Combine
+players_combined <- bind_rows(historic_players, future_preds)
+
+# Ensure Type is a factor or character
+players_combined$Type <- as.character(players_combined$Type)
+```
+
+```{r echo=FALSE}
+
+plot_ly() %>%
+  add_trace(data = historic_players,
+            x = ~Year, y = ~`Peak Players`,
+            name = "Historical",
+            type = "scatter", mode = "lines+markers",
+            line = list(color = "blue", width = 3),
+            marker = list(size = 6)) %>%
+  add_trace(data = future_preds,
+            x = ~Year, y = ~`Peak Players`,
+            name = "Forecast",
+            type = "scatter", mode = "lines+markers",
+            line = list(color = "red", width = 3, dash = 'dash'),
+            marker = list(size = 6, symbol = "circle-open")) %>%
+  layout(
+    title = list(text = "<b>Forecast of CS2 Peak Players</b>", x = 0),
+    xaxis = list(title = "Year", tickformat = ".0f"),
+    yaxis = list(title = "Average Players"),
+    legend = list(x = 0.05, y = 0.95, bgcolor = "rgba(255,255,255,0.5)")
+  )
+
+```
+```{r echo=FALSE}
+
+glove_case_df <- Daily_CAD_Items %>%
+  filter(Item == "Glove Case") %>%
+  select(ds = date, y = price_cad) %>%
+  arrange(ds)
+
+
+model <- prophet(glove_case_df,
+  yearly.seasonality = TRUE,
+  weekly.seasonality = TRUE,
+  daily.seasonality = FALSE)
+
+future <- make_future_dataframe(model, periods = 30)
+forecast <- predict(model, future)
+
+plot(model, forecast) +
+  ggtitle("Prophet Forecast for Glove Case Price") +
+  xlab("Date") + ylab("Price (CAD)")
+
+prophet_plot_components(model, forecast)
+
+
+
 
 ```
 
