@@ -548,6 +548,32 @@ case_price_summary_gt %>%
 ![Case Drop Odds](https://dmarket.com/blog/cs2-case-odds/cs2%20odds%20percentage.jpg)
 ### Chroma Case vs Skins
 
+```{r}
+chroma_items <- c("Chroma Case",
+                  "Glock-18 | Catacombs (Minimal Wear)",
+                  "AK-47 | Cartel (Minimal Wear)",
+                  "AWP | Man-o'-war (Minimal Wear)")
+chroma2_items <- c("Chroma 2 Case",
+                   "USP-S | Torque (Minimal Wear)",
+                   "M4A1-S | Hyper Beast (Minimal Wear)",
+                   "AWP | Worm God (Minimal Wear)")
+gamma_items <- c("Gamma Case",
+                 "Glock-18 | Wasteland Rebel (Minimal Wear)",
+                 "M4A4 | Desolate Space (Minimal Wear)",
+                 "AWP | Phobos (Minimal Wear)")
+
+skins_and_cases_df <- Daily_CAD_Items %>%
+  filter(Item %in% c(chroma_items,chroma2_items,gamma_items ))
+
+plot_ly(skins_and_cases_df, x = ~date, y = ~price_cad, color = ~Item, type = 'scatter', mode = 'lines') %>%
+  layout(
+    title = "Chroma, Chroma 2, Gamma Cases - Price Over Time (CAD)",
+    xaxis = list(title = "Date"),
+    yaxis = list(title = "Price (CAD)"),
+legend = list(orientation = "h", y = -0.2)   )
+
+```
+
 ```{r echo=FALSE}
 chroma_items <- c("Chroma Case",
                   "Glock-18 | Catacombs (Minimal Wear)",
@@ -652,7 +678,16 @@ plot_ly(dnm_df, x = ~date, y = ~price_cad, color = ~Item, type = 'scatter', mode
 
 
 ```
+```{r echo=FALSE}
+# Steam Player Count Data Table
 
+datatable(
+  Daily_CAD_Items,
+  options = list(
+    pageLength = 10,
+    autoWidth = TRUE)
+  )
+```
 
 # Forecasts
 

@@ -1,0 +1,1717 @@
+---
+title: "Speculation and Scarcity: Evaluating CS2 Skins and Cases as Digital Commodities"
+author: "Andrew Pettifor & Mathew Frame"
+format: html
+---
+
+```{r setup, include=FALSE}
+library(RSelenium)
+library(jsonlite)
+library(stringr)
+library(dplyr)
+library(lubridate)
+library(ggplot2)
+library(tidyr)
+library(tidyverse)
+library(tidyquant)
+library(readr)
+library(plotly)
+library(gt)
+library(purrr)
+library(recipes)
+library(parsnip)
+library(tidymodels)
+library(slider)
+library(rvest)
+library(DT)
+library(prophet)
+library(GGally)
+library(patchwork)
+library(gridExtra)
+library(broom)
+library(knitr)
+library(kableExtra)
+```
+
+
+## Executive Summary
+
+In this project, our team evaluated the investment potential of CS2 weapon cases—tradable digital commodities that hold cosmetic in-game items. Much like commodity baskets or ETFs, the value of each case is derived from the expected value of the items you can receive by opening the case, as well as a speculative markup we refer to as the "gambler’s premium." Our objective was to determine whether these digital assets behave in predictable, economically driven ways—and whether they can rival traditional investments like gold or the S&P 500.
+
+To answer this, we used web scraping to collect daily pricing data on several popular CS2 cases and their associated items. We analyzed return relationships using regression models, assessed price behavior through volatility and seasonality analysis, and built forecasting models using Prophet to evaluate future growth potential. Our findings consistently showed that the returns of high-profile items are significant predictors of case returns, and that cases tend to trade above the sum of their parts—reflecting the value of speculation, scarcity, and accessibility.
+
+Importantly, when benchmarked against gold and SPY since early 2022, our CS2 case portfolio delivered superior cumulative returns. This growth has been further supported by a steadily increasing player base, driven by CS2’s free-to-play model, a strong esports ecosystem, and cultural relevance across gaming communities. Together, these findings suggest that select CS2 cases may offer legitimate, data-driven investment opportunities—particularly for risk-tolerant investors seeking exposure to emerging digital economies. Additionally, we investigated catalysts for growth, and explained why we think the economy behind these digital commodities will continue to grow into the future.
+
+
+## What is Counter Strike 2 (CS2) and what are Skins? 
+
+### A Billion-Dollar Marketplace Inside a Video Game
+
+The market capitalization of the *Counter-Strike 2* (CS2) skin economy is currently estimated at between **$3.5 to $4 billion USD**.
+
+This isn’t a typo—and it’s not a standalone app or cryptocurrency. It’s a digital marketplace built entirely within a free-to-play multiplayer video game, where cosmetic virtual items known as "skins" are bought, sold, and traded like speculative assets. What began as a niche feature in a tactical shooter has evolved into a global financial ecosystem—one that increasingly resembles commodity or alternative asset markets.
+
+This report explores whether CS2 skins and cases can be considered **digital commodities**, using financial data analysis, historical pricing trends, and player activity metrics. But first, it’s necessary to understand what CS2 is, and how its economy works.
+
+### What Is Counter-Strike 2 (CS2)?
+
+*Counter-Strike 2* is the latest installment in Valve’s iconic *Counter-Strike* franchise, officially released in **September 2023**. It serves as the free upgrade and full successor to *Counter-Strike: Global Offensive* (CS:GO), which launched in **2012** and became one of the most successful competitive games in the world.
+
+Built on the **Source 2 engine**, CS2 brings modernized visuals, improved performance, and refined gameplay to a fan base that has been active for over two decades. While gameplay revolves around 5v5 tactical gunfights and objective control, the game is also home to a surprisingly sophisticated **virtual item economy**.
+
+![Counter Strike 2 Logo](https://media.overclock3d.net/2025/02/counter-strike-2.jpg)
+
+
+### From Tactical Shooter to Digital Economy
+
+The roots of CS2’s economy trace back to **CS:GO**, which introduced cosmetic weapon skins in 2013. Skins are purely aesthetic—they do not impact gameplay—but their perceived rarity and visual appeal created a strong demand among players. Over time, skins became **tradable digital collectibles**, giving rise to a **secondary market** where items could command prices ranging from a few cents to **hundreds of thousands of dollars**.
+
+Valve supported this economy by allowing peer-to-peer trades and by creating the **Steam Community Market**, where players could list and sell skins. However, the most valuable trades now often occur **off-platform**, via third-party marketplaces or private transactions.
+
+### Understanding the CS2 Skin Market
+
+At the core of the CS2 economy are **skins and cases**:
+
+- **Skins** change the appearance of weapons, gloves, knives, and more.
+
+- **Cases** are loot boxes that contain a randomized selection of skins, which can only be unlocked with paid keys.
+
+Key price drivers include:
+
+- **Rarity Tier** (e.g., Covert, Classified, Rare Special Items)
+
+- **Float Value**: A numerical indicator of wear, from Factory New to Battle-Scarred
+
+- **Pattern Index**: Unique variations in skin texture, which can drastically affect value
+
+- **Design & Popularity**: Visual appeal, collector interest, and usage by streamers or professional players
+
+- **Game Updates**: Buffs/nerfs to weapons or visual engine changes can increase or decrease demand
+
+![Rarity Tiers](https://prosettings.net/cdn-cgi/image/dpr=1%2Cf=auto%2Cfit=cover%2Ch=358%2Cq=95%2Cw=720/wp-content/uploads/cs2-skin-rarity-tiers.png)
+
+
+For example, a particular AK-47 skin with a rare pattern and Factory New condition might sell for several thousand dollars, especially if used by a famous esports player. These market dynamics are further amplified by **Supply limitations**. (some cases and skins are discontinued, making them more scarce)
+
+###  A Cultural and Economic Phenomenon
+
+While CS2 remains a video game at heart, its virtual economy increasingly resembles that of **a real-world financial market**:
+
+- Items are speculated on, collected, and held for long-term value.
+
+- Players and traders monitor **price charts**, **market sentiment**, and **economic indicators**.
+
+- There is an active secondary market with:
+  
+  - **Price arbitrage**
+  
+  - **Volatility**
+ 
+  - **Liquidity differences** across platforms
+
+For many participants, CS2 skins are more than just digital flair—they are **digital assets**, with price behavior mimicking that of commodities like precious metals or collectibles like sports cards. The total market size, user engagement, and asset performance over time all point to a maturing virtual economy worthy of financial analysis.
+
+
+
+
+## Research Objective
+
+
+The objective of this report is to evaluate whether **CS2 skins and cases** can be considered **digital commodities** by analyzing their market behavior, price dynamics, and interaction with player demand.
+
+In traditional finance, commodities are defined as **fungible, tradable goods** with value driven by supply, demand, scarcity, and market speculation. As the CS2 marketplace has evolved, skins and cases have begun to display similar economic behaviors, including:
+
+- Price volatility based on external events and updates  
+- Speculative trading and "holding" behavior  
+- Supply constraints and deflationary design (e.g., discontinued drops)  
+- A robust, decentralized secondary market with arbitrage opportunities  
+- Community-driven valuation mechanisms  
+
+This report applies financial techniques such as **time series analysis**, **regression modeling**, and **forecasting** to:
+
+- Track historical price changes of selected CS2 cases and skins  
+- Compare skin and case performance over time  
+- Analyze correlations between market prices and player base activity  
+- Model the price determinants of digital items  
+- Predict future trends using player activity and item performance data  
+
+By quantifying these variables, the report aims to determine whether these digital items exhibit the economic traits of **emerging speculative assets** or **true digital commodities**, or if they should be viewed through a different financial lens—such as collectibles or high-risk digital goods.
+
+Ultimately, the analysis will assess if the CS2 item market behaves in a way that warrants its comparison to established commodity markets, and what implications this might have for the broader field of finance and digital asset investment.
+
+
+## Data Collection and Methodology
+
+
+This section outlines the methods used to collect, clean, and analyze data from the CS2 skin marketplace and player base. The goal is to establish a financial dataset capable of supporting time series analysis, regression modeling, and forecasting.
+
+### Data Sources
+
+The dataset used in this analysis combines multiple sources:
+
+- **Steam Community Market**:  
+  Prices of selected CS2 cases and skins were scraped using `RSelenium` to access JavaScript-rendered charts on the Steam Marketplace.
+
+- **CS2 Player Counts**:  
+  Daily and monthly player count data were collected using `rvest` from Steam Charts, providing a proxy for market demand and player engagement.
+
+- **Exchange Rates**:  
+  Since Steam listings are in USD and the report is written for a Canadian context, all price data was converted into CAD using daily USD/CAD exchange rates from `tidyquant`. Additionally, `tidyquant` was used to pull comparable data on tickers SPY and GLD. 
+
+### Item Selection Criteria
+
+To ensure a representative and balanced view of the skin market, the analysis focuses on **five popular CS2 cases**, each with **three skins** selected based on weapon type:
+
+- **Pistol**
+- **Rifle**
+- **Special/Random**
+
+The following cases and skins were selected:
+
+**Chroma Case**
+
+- Glock-18 | Catacombs (Minimal Wear)
+
+- AK-47 | Cartel (Minimal Wear)
+
+- AWP | Man-o'-war (Minimal Wear)
+
+**Chroma 2 Case**
+
+- USP-S | Torque (Minimal Wear)
+
+- M4A1-S | Hyper Beast (Minimal Wear)
+
+- AWP | Worm God (Minimal Wear)
+
+**Gamma Case**
+
+- Glock-18 | Wasteland Rebel (Minimal Wear)
+
+- M4A4 | Desolate Space (Minimal Wear)
+
+- AWP | Phobos (Minimal Wear)
+
+**Glove Case**
+
+- USP-S | Cyrex (Minimal Wear)
+
+- M4A4 | Buzz Kill (Minimal Wear)
+
+- P90 | Shallow Grave (Minimal Wear)
+
+**Dreams & Nightmares Case**
+
+- USP-S | Ticket to Hell (Minimal Wear)
+
+- AK-47 | Nightwish (Minimal Wear)
+
+- MP9 | Starlight Protector (Minimal Wear)
+
+**These cases were chosen to reflect diversity in:**
+
+- 1. Release date (from legacy to modern CS2-compatible cases)
+
+- 2. Price history depth
+
+- 3. Popularity and market activity
+
+- 4. Skin types and categories
+
+
+```{r echo=FALSE}
+# Main Cases
+cases <- c(
+  "Chroma Case", "Chroma 2 Case", "Gamma Case","Glove Case","Dreams & Nightmares Case"
+)
+
+case_skins <- list(
+  "Chroma Case" = c(
+    "Glock-18 | Catacombs (Minimal Wear)",           # pistol
+    "AK-47 | Cartel (Minimal Wear)",                 # rifle
+    "AWP | Man-o'-war (Minimal Wear)"                # AWP
+  ),
+  "Chroma 2 Case" = c(
+    "USP-S | Torque (Minimal Wear)",                 # pistol
+    "M4A1-S | Hyper Beast (Minimal Wear)",           # rifle
+    "AWP | Worm God (Minimal Wear)"                  # AWP
+  ),
+  "Gamma Case" = c(
+    "Glock-18 | Wasteland Rebel (Minimal Wear)",     # pistol
+    "M4A4 | Desolate Space (Minimal Wear)",          # rifle
+    "AWP | Phobos (Minimal Wear)"                    # AWP-preferred random
+  ),
+  "Glove Case" = c(
+    "USP-S | Cyrex (Minimal Wear)",                  # pistol
+    "M4A4 | Buzz Kill (Minimal Wear)",               # rifle
+    "P90 | Shallow Grave (Minimal Wear)"             # random
+  ),
+  "Dreams & Nightmares Case" = c(
+    "USP-S | Ticket to Hell (Minimal Wear)",         # pistol
+    "AK-47 | Nightwish (Minimal Wear)",              # rifle
+    "MP9 | Starlight Protector (Minimal Wear)"       # random
+  )
+)
+
+# Optional Additional Cases
+casesfinal <- c(
+  "Chroma Case", "Chroma 2 Case", "Falchion Case", "Shadow Case",
+  "Revolver Case", "Operation Wildfire Case", "Chroma 3 Case",
+  "Gamma Case", "Gamma 2 Case", "Glove Case", "Spectrum Case",
+  "Operation Hydra Case", "Spectrum 2 Case", "Clutch Case", 
+  "Horizon Case", "Danger Zone Case", "Prisma Case", "CS20 Case", 
+  "Shattered Web Case", "Prisma 2 Case", "Fracture Case", 
+  "Operation Broken Fang Case", "Snakebite Case", 
+  "Operation Riptide Case", "Dreams & Nightmares Case", 
+  "Recoil Case", "Revolution Case", "Kilowatt Case", "Gallery Case"
+  
+)
+
+
+```
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+# CSV Import
+url_skins <- "https://raw.githubusercontent.com/AndrewPettifor25/FIN_450_Steam_Final/refs/heads/main/steam_skins_raw.csv"
+all_skins_data <- read_csv(url_skins)
+
+url_cases <- "https://raw.githubusercontent.com/AndrewPettifor25/FIN_450_Steam_Final/refs/heads/main/steam_cases_raw.csv"
+all_cases_data <- read_csv(url_cases)
+
+```
+
+```{r echo=FALSE}
+# Filtering and Cleaning
+
+all_skins_data_for_combine <- all_skins_data %>%
+  rename(Item = Skin) %>%
+  select(Case, Item, Item_Type, date, price_usd, volume)
+
+all_cases_data_for_combine <- all_cases_data %>%
+  mutate(Item = Case) %>%
+  select(Case, Item, Item_Type, date, price_usd, volume)
+
+all_items_data <- bind_rows(all_cases_data_for_combine, all_skins_data_for_combine)
+
+all_items_data_clean <- all_items_data %>% 
+  mutate(date = as.POSIXct(date, tz = "UTC"))
+
+daily_item_closes <- all_items_data_clean %>%
+  mutate(
+    hour = hour(date),
+    day = as.Date(date)
+  ) %>%
+  filter(hour == 1) %>%  
+  group_by(Case, Item, Item_Type, day) %>%  
+  slice_max(order_by = date, n = 1) %>%
+  ungroup() %>%
+  select(Case, Item, Item_Type, date, price_usd, volume) %>%
+  arrange(Case, Item, date)
+
+past_month_items <- all_items_data_clean %>%
+  filter(date >= Sys.Date() - months(1)) %>%
+  group_by(Case, Item, Item_Type) %>%
+  arrange(date) %>%
+  slice(-1) %>%  #
+  ungroup()
+
+```
+
+```{r echo=FALSE}
+# USD-CAD Exchange 
+
+fx_usdcad <- tq_get("CAD=X", get = "stock.prices", from = "2010-01-01")
+
+fx_usdcad_clean <- fx_usdcad %>%
+  select(date, fx_rate = close)
+
+fx_usdcad_filled <- fx_usdcad_clean %>%
+  complete(date = seq.Date(min(date), max(date), by = "day")) %>%
+  fill(fx_rate, .direction = "down")
+
+```
+
+```{r echo=FALSE}
+#Filtering and Cleaning for CAD
+
+CAD_Converted_Items <- all_items_data_clean %>%
+  mutate(date_only = as.Date(date)) %>%
+  left_join(fx_usdcad_filled, by = c("date_only" = "date")) %>%
+  mutate(price_cad = price_usd * fx_rate) %>% 
+  drop_na()
+
+CAD_Selected_Items <- CAD_Converted_Items %>% 
+  select(Case, Item, Item_Type, date, price_cad, volume)
+```
+
+```{r echo=FALSE}
+#Filtering and Cleaning for CAD
+
+Daily_CAD_Items <- CAD_Selected_Items %>%
+  mutate(
+    hour = hour(date),
+    day = as.Date(date)
+  ) %>%
+  filter(hour == 1) %>%  
+  group_by(Case, Item, Item_Type, day) %>%  
+  slice_max(order_by = date, n = 1) %>%
+  ungroup() %>%
+  select(Case, Item, Item_Type, date, price_cad, volume) %>%
+  arrange(Case, Item, date)
+```
+
+```{r echo=FALSE}
+#Filtering and Cleaning for CAD
+
+Month_CAD_Items <- CAD_Selected_Items %>%
+  filter(date >= Sys.Date() - months(1)) %>%
+  group_by(Case, Item, Item_Type) %>%
+  arrange(date) %>%
+  slice(-1) %>%  
+  ungroup()
+```
+
+
+```{r echo=FALSE}
+cases_data <- all_items_data_clean %>% filter(Item_Type == "Case")
+skins_data <- all_items_data_clean %>% filter(Item_Type == "Skin")
+
+```
+
+Below is a searchable list that you can use to gain context about the type of items we are examining:
+
+```{r, warning=FALSE}
+#| echo: false
+# Scraped Items Daily Prices Table
+
+datatable(
+  Daily_CAD_Items,
+  options = list(
+    pageLength = 5,
+    autoWidth = TRUE)
+  )
+```
+
+## Market Overview
+```{r echo=FALSE}
+# Steam Player Count Scrape
+scrape_steamcharts <- function() {
+  url <- "https://steamcharts.com/app/730"
+  
+  page <- read_html(url)
+  
+  steam_data <- page %>%
+    html_element("table.common-table") %>%
+    html_table()
+  
+  return(steam_data)
+}
+
+steam_data <- scrape_steamcharts()
+
+steam_data_formatted <- steam_data %>%
+  mutate(
+    `Avg. Players` = comma(`Avg. Players`),
+    `Peak Players` = comma(`Peak Players`)
+  )
+```
+
+### Sustainable Growth Model
+
+A critical piece of understanding the CS2 skin and case economy is examining the size and growth of the game's player base. Case and skin prices are inherently tied to demand, and player count serves as a real-time proxy for market participation. 
+
+To assess this, we scraped monthly peak player data from SteamCharts for CS:GO (and now CS2) and visualized trends over time. Despite being more than a decade old, Counter Strike has seen continued player growth in recent years, even reaching an all time peak last month. This momentum is expected to continue into the future.
+
+Several factors continue to drive this sustained growth in player count:
+
+- **Free-to-play model**: Since becoming free-to-play in late 2018, the barrier to entry has been effectively eliminated. New users can try the game with no upfront cost, and this significantly boosts global accessibility.
+
+- **Strong community and Esports presence**: CS2 has a deeply entrenched player base, a massive creator community, and a global professional Esports circuit. This cultural importance keeps the game relevant and brings in new users through influencers, events, and tournaments.
+
+This growing player base reinforces the legitimacy of the case economy, suggesting that the CS2 market is not only stable but expanding. With more participants entering the market, demand for rare items and unopened cases is likely to continue to expand, providing further support for their investment potential.
+
+
+```{r echo=FALSE}
+# Steam Player Count Bar Chart
+
+steam_data_march <- steam_data %>%
+  filter(Month != "Last 30 Days" & grepl("^March", Month)) %>%
+  mutate(
+    Year = sub(".* ", "", Month),
+    `Avg. Players` = as.numeric(`Avg. Players`)
+  ) %>%
+  arrange(as.numeric(Year))
+
+steam_data_plot <- steam_data_march %>% 
+  select(Year, `Peak Players`, `Avg. Players`)
+
+
+plot_ly(steam_data_plot, x = ~Year) %>%
+  add_trace(
+    y = ~`Avg. Players`,
+    name = 'Avg. Players',
+    type = 'bar'
+  ) %>%
+  add_trace(
+    y = ~`Peak Players`,
+    name = 'Peak Players',
+    type = 'bar'
+  ) %>%
+  layout(
+    barmode = 'group',
+    title = "CS:GO -> CS2 Player Counts by Year",
+    xaxis = list(title = "Year"),
+    yaxis = list(title = "Number of Players")
+    
+  )
+
+```
+
+
+## Analysis of Cases
+
+### Case Price Dynamics
+
+The price trajectory of CS2 cases follows a remarkably consistent lifecycle, driven by market psychology, item scarcity, and speculative interest. Although initially volatile, case prices tend to stabilize and appreciate over time—making them a potentially attractive digital asset for long-term holders.
+
+We can break this lifecycle into three distinct phases:
+
+1. **Initial Drop**: Upon release, case prices tend to fall quickly. This is because a large volume of cases enters the market at once, and many players rush to open or sell them. The items inside also flood the market, pushing their prices down and reducing the expected value of the case itself.
+
+2. **Price Floor / Bottoming Out**: After the initial surge in supply is absorbed, case prices enter a period of relative stagnation. During this phase, cases are still being opened, but new supply slows as the case is eventually removed from the active drop pool. Market attention shifts elsewhere, and the case hovers near its lowest price point. This phase marks the point when an investor should enter the market.
+
+3. **Appreciation Through Scarcity**: As time passes, unopened cases become increasingly rare. Meanwhile, some of the skins inside may grow in value due to popularity, desirability, or their own declining supply. As a result, the case begins to appreciate—often surpassing its original EV—as both collectors and speculators re-enter the market, paying a premium for access to potentially high-value drops.
+
+This three-phase cycle is visible across nearly every case we studied and forms the basis of why we believe CS2 cases can function as viable investment vehicles. The chart below helps to visualize the lifecycle of the cases.
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+cases_only <- Daily_CAD_Items %>%
+  filter(Item_Type == "Case", Case %in% cases)  
+
+plot_ly(cases_only, x = ~date, y = ~price_cad, color = ~Item, type = 'scatter', mode = 'lines') %>%
+  layout(
+    title = "Cases Price Comparison Over Time (CAD)",
+    xaxis = list(title = "Date"),
+    yaxis = list(title = "Price (CAD)"),
+    legend = list(orientation = "h", y = -0.2)
+  )
+
+
+
+```
+
+### Post-CS2 Price Acceleration
+
+The launch of *Counter-Strike 2* (CS2) in September 2023 marked a pivotal moment for one of the largest virtual economies in gaming. As the long-awaited successor to *Counter-Strike: Global Offensive* (CS:GO), CS2 introduced updated visuals and mechanics—but more importantly, it preserved and revitalized a thriving marketplace of digital cosmetic items, including cases and skins.
+
+This transition injected fresh momentum into the market. Case prices across the board saw renewed interest, driven by returning players, increased media attention, and speculation around legacy item compatibility. Yet, what might appear to be a temporary surge actually builds on a deeper trend.
+
+Even before CS2’s release, many older cases had already begun steadily appreciating—fueled by declining supply and consistent demand for rare, desirable drops. Rather than creating an artificial spike, CS2 acted as a catalyst, accelerating what was already a structurally bullish environment.
+
+This chart illustrates the trajectory of five prominent cases, showing both short-term movement and long-term appreciation. The table below further quantifies this growth by comparing current prices to early benchmarks, reinforcing the idea that CS2 cases are not just a byproduct of hype—but potentially a legitimate digital asset class in their own right.
+
+
+```{r echo=FALSE, warning=FALSE}
+# Filtering and Cleaning
+
+avg_last_month <- Month_CAD_Items %>%
+  filter(Item_Type == "Case", Item %in% cases) %>%
+  group_by(Item) %>%
+  summarise(avg_last_month = mean(price_cad, na.rm = TRUE))
+
+case_inceptions <- Daily_CAD_Items %>%
+  filter(Item_Type == "Case", Item %in% cases) %>%
+  group_by(Item) %>%
+  summarise(inception_date = min(date))
+
+avg_inception_month <- Daily_CAD_Items %>%
+  filter(Item_Type == "Case", Item %in% cases) %>%
+  left_join(case_inceptions, by = "Item") %>%
+  filter(date >= inception_date & date <= inception_date + days(30)) %>%
+  group_by(Item) %>%
+  summarise(avg_inception = mean(price_cad, na.rm = TRUE))
+
+avg_six_months_later <- Daily_CAD_Items %>%
+  filter(Item_Type == "Case", Item %in% cases) %>%
+  left_join(case_inceptions, by = "Item") %>%
+  filter(date >= inception_date + months(6) & date <= inception_date + months(7)) %>%
+  group_by(Item) %>%
+  summarise(avg_six_month = mean(price_cad, na.rm = TRUE))
+
+case_price_summary_gt <- avg_last_month %>%
+  left_join(avg_inception_month, by = "Item") %>%
+  left_join(avg_six_months_later, by = "Item") %>%
+  mutate(
+    change_from_inception = avg_last_month - avg_inception,
+    change_from_six_month = avg_last_month - avg_six_month
+  )
+
+case_price_summary_gt %>%
+  gt() %>%
+  fmt_number(columns = where(is.numeric), decimals = 2) %>%
+  tab_header(
+    title = "Case Price Comparison in CAD",
+    subtitle = "Comparing Last Month Avg vs Inception & 6-Month Post-Inception"
+  ) %>%
+  cols_label(
+    Item = "Case",
+    avg_inception = "Avg at Inception (CAD)",
+    avg_six_month = "Avg at +6 Months after Inception (CAD)",
+    avg_last_month = "Avg at Last Month (CAD)",
+    change_from_inception = "Change vs Inception",
+    change_from_six_month = "Change vs +6 Months"
+  ) %>%
+  data_color(
+    columns = vars(change_from_inception, change_from_six_month),
+    colors = scales::col_numeric(palette = c( "white", "green"), domain = NULL)
+  ) %>%
+  tab_style(
+    style = cell_text(weight = "bold"),
+    locations = cells_column_labels(everything())
+  )
+
+
+```
+
+## Cases vs Skins
+
+### Chroma Case vs Skins
+
+### Cases vs. Skins: Pricing Relationships
+
+
+
+The Glove Case has steadily increased in value along with its contents, even though the individual skins show modest movement. This suggests that scarcity and demand for rare glove drops are key drivers of long-term case growth.
+
+```{r}
+#| include: false
+chroma_items <- c("Chroma Case",
+                  "Glock-18 | Catacombs (Minimal Wear)",
+                  "AK-47 | Cartel (Minimal Wear)",
+                  "AWP | Man-o'-war (Minimal Wear)")
+
+chroma_df <- Daily_CAD_Items %>%
+  filter(Item %in% chroma_items)
+
+plot_ly(chroma_df, x = ~date, y = ~price_cad, color = ~Item, type = 'scatter', mode = 'lines') %>%
+  layout(
+    title = "Chroma Case vs Skins - Price Over Time (CAD)",
+    xaxis = list(title = "Date"),
+    yaxis = list(title = "Price (CAD)"),
+legend = list(orientation = "h", y = -0.2)   )
+
+
+
+```
+
+```{r}
+#| include: false
+
+chroma2_items <- c("Chroma 2 Case",
+                   "USP-S | Torque (Minimal Wear)",
+                   "M4A1-S | Hyper Beast (Minimal Wear)",
+                   "AWP | Worm God (Minimal Wear)")
+
+chroma2_df <- Daily_CAD_Items %>%
+  filter(Item %in% chroma2_items)
+
+plot_ly(chroma2_df, x = ~date, y = ~price_cad, color = ~Item, type = 'scatter', mode = 'lines') %>%
+  layout(
+    title = "Chroma 2 Case vs Skins - Price Over Time (CAD)",
+    xaxis = list(title = "Date"),
+    yaxis = list(title = "Price (CAD)"),
+legend = list(orientation = "h", y = -0.2)   )
+
+```
+
+
+```{r}
+#| include: false
+gamma_items <- c("Gamma Case",
+                 "Glock-18 | Wasteland Rebel (Minimal Wear)",
+                 "M4A4 | Desolate Space (Minimal Wear)",
+                 "AWP | Phobos (Minimal Wear)")
+
+gamma_df <- Daily_CAD_Items %>%
+  filter(Item %in% gamma_items)
+
+plot_ly(gamma_df, x = ~date, y = ~price_cad, color = ~Item, type = 'scatter', mode = 'lines') %>%
+  layout(
+    title = "Gamma Case vs Skins - Price Over Time (CAD)",
+    xaxis = list(title = "Date"),
+    yaxis = list(title = "Price (CAD)"),
+legend = list(orientation = "h", y = -0.2)   )
+
+
+```
+
+
+```{r}
+#| echo: false
+glove_items <- c("Glove Case",
+                 "USP-S | Cyrex (Minimal Wear)",
+                 "M4A4 | Buzz Kill (Minimal Wear)",
+                 "P90 | Shallow Grave (Minimal Wear)")
+
+glove_df <- Daily_CAD_Items %>%
+  filter(Item %in% glove_items)
+
+plot_ly(glove_df, x = ~date, y = ~price_cad, color = ~Item, type = 'scatter', mode = 'lines') %>%
+  layout(
+    title = "Glove Case vs Skins - Price Over Time (CAD)",
+    xaxis = list(title = "Date"),
+    yaxis = list(title = "Price (CAD)"),
+legend = list(orientation = "h", y = -0.2)   )
+
+
+```
+
+For the sake of avoiding redundancy, we combined the Chroma, Chroma 2, and Gamma Cases into one graph. We again observe that rising skin prices correspond with steady case appreciation. This reinforces our conclusion: cases behave like baskets of items, and their value grows alongside the top-performing drops inside.
+
+```{r, warning=FALSE}
+#| echo: false
+chroma_items <- c("Chroma Case",
+                  "Glock-18 | Catacombs (Minimal Wear)",
+                  "AK-47 | Cartel (Minimal Wear)",
+                  "AWP | Man-o'-war (Minimal Wear)")
+chroma2_items <- c("Chroma 2 Case",
+                   "USP-S | Torque (Minimal Wear)",
+                   "M4A1-S | Hyper Beast (Minimal Wear)",
+                   "AWP | Worm God (Minimal Wear)")
+gamma_items <- c("Gamma Case",
+                 "Glock-18 | Wasteland Rebel (Minimal Wear)",
+                 "M4A4 | Desolate Space (Minimal Wear)",
+                 "AWP | Phobos (Minimal Wear)")
+
+skins_and_cases_df <- Daily_CAD_Items %>%
+  filter(Item %in% c(chroma_items,chroma2_items,gamma_items ))
+
+plot_ly(skins_and_cases_df, x = ~date, y = ~price_cad, color = ~Item, type = 'scatter', mode = 'lines') %>%
+  layout(
+    title = "Chroma, Chroma 2, Gamma Cases - Price Over Time (CAD)",
+    xaxis = list(title = "Date"),
+    yaxis = list(title = "Price (CAD)"),
+legend = list(orientation = "h", y = -0.2)   )
+```
+
+### Dreams & Nightmares Case vs Skins
+
+This case is a clear **outlier**. While most cases rise alongside the value of their items, the Dreams & Nightmares Case has appreciated despite a decline in the prices of its top drops. We believe this is because the case is relatively new and the items inside have not yet matured into vintage or scarce collectibles.
+
+```{r echo=FALSE}
+dnm_items <- c("Dreams & Nightmares Case",
+               "USP-S | Ticket to Hell (Minimal Wear)",
+               "AK-47 | Nightwish (Minimal Wear)",
+               "MP9 | Starlight Protector (Minimal Wear)")
+
+dnm_df <- Daily_CAD_Items %>%
+  filter(Item %in% dnm_items)
+
+plot_ly(dnm_df, x = ~date, y = ~price_cad, color = ~Item, type = 'scatter', mode = 'lines') %>%
+  layout(
+    title = "Dreams & Nightmares Case vs Skins - Price Over Time (CAD)",
+    xaxis = list(title = "Date"),
+    yaxis = list(title = "Price (CAD)"),
+    legend = list(orientation = "h", y = -0.2) 
+  )
+
+
+```
+
+To better understand what drives the value of CS2 cases, we compared the historical price trends of each case with the performance of several key skins inside them. Across most examples, we observed a clear relationship: as the prices of high-profile items increased, the value of the case rose in parallel. This reinforces our core finding that case prices are anchored to the expected value of their contents, making them responsive to changes in skin demand.
+
+While there are some exceptions—such as newer cases that haven’t yet developed rarity-based value—the overall trend supports the idea that cases behave like item-indexed assets. This behavior strengthens the case for using them as a more stable, diversified way to gain exposure to the CS2 skin market.
+
+# Forecasts
+
+
+```{r}
+#| include: false
+chroma2_ret_long_for <- chroma2_df %>% 
+  arrange(date, Item) %>% 
+  dplyr::group_by(Item) %>% 
+  dplyr::mutate(return = log(price_cad / dplyr::lag(price_cad))) %>% 
+  na.omit() %>% 
+  transmute(date, Item, return)
+
+chroma2_ret_for <- chroma2_ret_long_for %>% 
+  tidyr::pivot_wider(names_from = Item, values_from = return) %>% 
+  filter(date >= as.Date("2016-01-01")) %>% 
+  na.omit()
+```
+
+```{r}
+#| include: false
+
+# Filter only Chroma 2 Case and prepare modeling data
+model_data <- Daily_CAD_Items %>%
+  filter(Item_Type == "Case", Item == "Chroma 2 Case") %>%
+  arrange(date) %>%
+  mutate(
+    price_tomorrow = lead(price_cad),
+    price_lag_1 = lag(price_cad),
+    price_change = price_cad - price_lag_1,
+    date_num = as.numeric(date)
+  ) %>%
+  drop_na(price_tomorrow, price_lag_1)
+
+
+set.seed(123)
+split <- initial_split(model_data, prop = 0.8)
+train <- training(split)
+test <- testing(split)
+
+
+price_recipe <- recipe(price_tomorrow ~ price_cad + price_lag_1 + price_change + volume + date_num, data = train) %>%
+  step_dummy(all_nominal_predictors()) %>%
+  step_normalize(all_numeric_predictors())
+
+
+price_model <- linear_reg() %>%
+  set_engine("lm")
+
+
+price_workflow <- workflow() %>%
+  add_recipe(price_recipe) %>%
+  add_model(price_model)
+
+
+price_fit <- fit(price_workflow, data = train)
+
+price_preds <- predict(price_fit, new_data = test) %>%
+  bind_cols(test)
+
+```
+
+
+```{r}
+#| include: false
+
+ggplot(price_preds, aes(x = .pred, y = price_tomorrow)) +
+  geom_point(alpha = 0.4, color = "blue") +
+  geom_abline(linetype = "dashed", color = "gray") +
+  labs(
+    title = "Predicted vs. Actual Price Chroma 2 Case (Next Day)",
+    x = "Predicted Price (CAD)",
+    y = "Actual Price (CAD)"
+  ) +
+  theme_minimal()
+
+
+
+
+```
+
+```{r}
+#| include: false
+price_preds%>%
+  metrics(truth = price_tomorrow, estimate = .pred) %>% 
+  gt() %>% 
+  fmt_number(columns = .estimate, decimals = 5) %>%
+  cols_label(
+    .metric = "Metric",
+    .estimator = "Estimator",
+    .estimate = "Estimate"
+  ) %>%
+  text_transform(
+    locations = cells_body(columns = .metric),
+    fn = toupper
+  ) %>%
+  tab_header(
+    title = "Price Prediction Model Performance",
+    subtitle = "Linear Regression Forecast for Next-Day Case Prices"
+  ) %>%
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(columns = everything())
+  ) %>%
+  tab_style(
+    style = cell_text(weight = "bold"),
+    locations = cells_column_labels(everything())
+  )
+
+
+
+
+```
+
+```{r}
+#| include: false
+
+ggplot(price_preds, aes(x = .pred, y = .pred - price_tomorrow)) +
+  geom_hline(yintercept = 0, color = "gray", linetype = "dashed", size = 0.8) +
+  geom_point(aes(color = abs(.pred - price_tomorrow)), alpha = 0.7, size = 3) +
+  scale_color_gradient(low = "steelblue", high = "red", name = "Absolute Error") +
+  labs(
+    title = "Residuals vs Predictions Chroma 2 Case (Daily Model)",
+    subtitle = "Deviation of Predicted Daily Prices from Actuals",
+    x = "Predicted Price (CAD)",
+    y = "Residual (Error: Predicted - Actual)"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    legend.position = "right",
+    plot.title = element_text(face = "bold"),
+    panel.grid.minor = element_blank()
+  )
+```
+```{r}
+#| include: false
+
+
+# Monthly Forecast — Chroma 2 Case only
+monthly_data_chroma2 <- Daily_CAD_Items %>%
+  filter(Item_Type == "Case", Item == "Chroma 2 Case") %>%
+  mutate(month = floor_date(date, "month")) %>%
+  group_by(month) %>%
+  summarise(
+    price_cad = mean(price_cad, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  arrange(month) %>%
+  mutate(
+    price_next_month = lead(price_cad),
+    price_last_month = lag(price_cad),
+    price_change_month = price_cad - price_last_month,
+    month_num = as.numeric(month)
+  ) %>%
+  drop_na(price_next_month, price_last_month)
+
+
+set.seed(123)
+split_monthly_chroma2 <- initial_split(monthly_data_chroma2, prop = 0.5)
+train_monthly_chroma2 <- training(split_monthly_chroma2)
+test_monthly_chroma2 <- testing(split_monthly_chroma2)
+
+
+price_recipe_monthly_chroma2 <- recipe(price_next_month ~ price_cad + price_last_month + price_change_month + month_num, data = train_monthly_chroma2) %>%
+  step_dummy(all_nominal_predictors()) %>%
+  step_normalize(all_numeric_predictors())
+
+
+price_model_monthly_chroma2 <- linear_reg() %>%
+  set_engine("lm")
+
+
+price_workflow_monthly_chroma2 <- workflow() %>%
+  add_recipe(price_recipe_monthly_chroma2) %>%
+  add_model(price_model_monthly_chroma2)
+
+
+price_fit_monthly_chroma2 <- fit(price_workflow_monthly_chroma2, data = train_monthly_chroma2)
+
+price_preds_monthly_chroma2 <- predict(price_fit_monthly_chroma2, new_data = test_monthly_chroma2) %>%
+  bind_cols(test_monthly_chroma2)
+
+
+```
+
+```{r}
+#| include: false
+
+ggplot(price_preds_monthly_chroma2, aes(x = .pred, y = price_next_month)) +
+  geom_point(alpha = 0.4, color = "darkgreen") +
+  geom_abline(linetype = "dashed", color = "gray") +
+  labs(
+    title = "Predicted vs. Actual Price (Next Month)",
+    x = "Predicted Price (CAD)",
+    y = "Actual Price (CAD)"
+  ) +
+  theme_minimal()
+
+```
+
+```{r}
+#| include: false
+
+price_preds_monthly_chroma2 %>%
+  metrics(truth = price_next_month, estimate = .pred) %>% 
+  gt() %>% 
+  fmt_number(columns = .estimate, decimals = 5) %>%
+  cols_label(
+    .metric = "Metric",
+    .estimator = "Estimator",
+    .estimate = "Estimate"
+  ) %>%
+  text_transform(
+    locations = cells_body(columns = .metric),
+    fn = toupper
+  ) %>%
+  tab_header(
+    title = "Monthly Price Prediction Model Performance — Chroma 2 Case",
+    subtitle = "Linear Regression Forecast for Next-Month Price"
+  ) %>%
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(columns = everything())
+  ) %>%
+  tab_style(
+    style = cell_text(weight = "bold"),
+    locations = cells_column_labels(everything())
+  )
+```
+
+```{r}
+#| include: false
+
+ggplot(price_preds_monthly_chroma2, aes(x = .pred, y = .pred - price_next_month)) +
+  geom_hline(yintercept = 0, color = "gray", linetype = "dashed", size = 0.8) +
+  geom_point(aes(color = abs(.pred - price_next_month)), alpha = 0.7, size = 3) +
+  scale_color_gradient(low = "steelblue", high = "red", name = "Absolute Error") +
+  labs(
+    title = "Chroma 2 Case — Residuals vs Predictions",
+    subtitle = "Deviation of Monthly Predicted Prices from Actuals",
+    x = "Predicted Price (CAD)",
+    y = "Residual (Error: Predicted - Actual)"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    legend.position = "right",
+    plot.title = element_text(face = "bold"),
+    panel.grid.minor = element_blank()
+  )
+```
+
+```{r}
+#| include: false
+
+
+daily_ret_data <- chroma2_ret_for %>%
+  select(date, `Chroma 2 Case`) %>%
+  arrange(date) %>%
+  mutate(
+    return_tomorrow = lead(`Chroma 2 Case`),
+    return_yesterday = lag(`Chroma 2 Case`),
+    return_change = `Chroma 2 Case` - return_yesterday,
+    date_num = as.numeric(date)
+  ) %>%
+  drop_na(return_tomorrow, return_yesterday)
+
+
+set.seed(123)
+split_daily_ret <- initial_split(daily_ret_data, prop = 0.8)
+train_daily_ret <- training(split_daily_ret)
+test_daily_ret <- testing(split_daily_ret)
+
+
+recipe_daily_ret <- recipe(return_tomorrow ~ `Chroma 2 Case` + return_yesterday + return_change + date_num, data = train_daily_ret) %>%
+  step_normalize(all_numeric_predictors())
+
+model_daily_ret <- linear_reg() %>%
+  set_engine("lm")
+
+
+workflow_daily_ret <- workflow() %>%
+  add_recipe(recipe_daily_ret) %>%
+  add_model(model_daily_ret)
+
+fit_daily_ret <- fit(workflow_daily_ret, data = train_daily_ret)
+
+preds_daily_ret <- predict(fit_daily_ret, new_data = test_daily_ret) %>%
+  bind_cols(test_daily_ret)
+
+```
+
+
+### Daily Return Forecast
+
+As a modeling exercise, we built a regression-based forecast of daily log returns for the Chroma 2 Case using past price movements of selected items. While short-term prediction is inherently difficult due to noise and low volatility, our goal was to evaluate whether there was any consistent, explainable structure in daily return behavior.
+
+
+
+
+### Plot: Predicted vs Actual Daily Return
+
+```{r echo=FALSE}
+
+ggplot(preds_daily_ret, aes(x = .pred, y = return_tomorrow)) +
+  geom_point(alpha = 0.5, color = "dodgerblue4") +
+  geom_abline(linetype = "dashed", color = "gray") +
+  labs(
+    title = "Predicted vs Actual Daily Log Return",
+    subtitle = "Chroma 2 Case",
+    x = "Predicted Daily Return",
+    y = "Actual Daily Return"
+  ) +
+  theme_minimal()
+
+```
+
+The results confirm that the model captures broad directional trends, though individual daily returns remain highly variable. With an R-squared near zero and relatively low RMSE and MAE values, the model performs as expected for a short-horizon financial time series. The takeaway here is not precise forecasting, but rather validation that case prices react to underlying item movements—even on a short time frame—reinforcing our broader investment thesis.
+
+###  Table: Model Performance
+
+```{r echo=FALSE}
+
+preds_daily_ret %>%
+  metrics(truth = return_tomorrow, estimate = .pred) %>%
+  gt() %>%
+  fmt_number(columns = .estimate, decimals = 5) %>%
+  cols_label(
+    .metric = "Metric",
+    .estimator = "Estimator",
+    .estimate = "Estimate"
+  ) %>%
+  text_transform(
+    locations = cells_body(columns = .metric),
+    fn = toupper
+  ) %>%
+  tab_header(
+    title = "Model Performance — Daily Return Forecast",
+    subtitle = "Chroma 2 Case (Log Returns)"
+  ) %>%
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(columns = everything())
+  ) %>%
+  tab_style(
+    style = cell_text(weight = "bold"),
+    locations = cells_column_labels(everything())
+  )
+
+```
+
+
+
+### Residual Plot: Daily Return Forecast
+
+
+The residual plot confirms what we expect in short-horizon forecasting: most prediction errors are small and centered around zero, with occasional outliers. The lack of a clear pattern or bias in the residuals suggests the model is well-specified, even if daily returns remain inherently noisy and difficult to predict.
+
+
+```{r echo=FALSE}
+
+ggplot(preds_daily_ret, aes(x = .pred, y = .pred - return_tomorrow)) +
+  geom_hline(yintercept = 0, color = "gray70", linetype = "dashed") +
+  geom_point(aes(color = abs(.pred - return_tomorrow)), alpha = 0.7, size = 3) +
+  scale_color_gradient(low = "skyblue", high = "firebrick", name = "Absolute Error") +
+  labs(
+    title = "Residuals vs Predictions — Daily Log Return",
+    subtitle = "Error Between Forecasted and Actual Log Return",
+    x = "Predicted Return",
+    y = "Residual (Predicted - Actual)"
+  ) +
+  theme_minimal(base_size = 14)
+```
+
+
+
+```{r}
+#| include: false
+
+library(tidyverse)
+library(lubridate)
+library(tidymodels)
+library(gt)
+
+
+monthly_ret_chroma2 <- chroma2_ret_for %>%
+  select(date, `Chroma 2 Case`) %>%
+  mutate(month = floor_date(date, "month")) %>%
+  group_by(month) %>%
+  summarise(
+    monthly_return = sum(`Chroma 2 Case`, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  arrange(month) %>%
+  mutate(
+    return_next_month = lead(monthly_return),
+    return_last_month = lag(monthly_return),
+    return_change = monthly_return - return_last_month,
+    month_num = as.numeric(month)
+  ) %>%
+  drop_na(return_next_month, return_last_month)
+
+
+set.seed(123)
+split_month_ret <- initial_split(monthly_ret_chroma2, prop = 0.5)
+train_month_ret <- training(split_month_ret)
+test_month_ret <- testing(split_month_ret)
+
+
+recipe_month_ret <- recipe(return_next_month ~ monthly_return + return_last_month + return_change + month_num, data = train_month_ret) %>%
+  step_normalize(all_numeric_predictors())
+
+
+model_month_ret <- linear_reg() %>%
+  set_engine("lm")
+
+
+workflow_month_ret <- workflow() %>%
+  add_recipe(recipe_month_ret) %>%
+  add_model(model_month_ret)
+
+fit_month_ret <- fit(workflow_month_ret, data = train_month_ret)
+
+
+preds_month_ret <- predict(fit_month_ret, new_data = test_month_ret) %>%
+  bind_cols(test_month_ret)
+
+```
+
+
+
+
+```{r}
+#| include: false
+
+ggplot(preds_month_ret, aes(x = .pred, y = return_next_month)) +
+  geom_point(alpha = 0.5, color = "darkorange") +
+  geom_abline(linetype = "dashed", color = "gray") +
+  labs(
+    title = "Predicted vs Actual Monthly Return",
+    subtitle = "Chroma 2 Case (Log Return)",
+    x = "Predicted Monthly Return",
+    y = "Actual Monthly Return"
+  ) +
+  theme_minimal()
+
+```
+
+
+
+```{r}
+#| include: false
+
+preds_month_ret %>%
+  metrics(truth = return_next_month, estimate = .pred) %>%
+  gt() %>%
+  fmt_number(columns = .estimate, decimals = 5) %>%
+  cols_label(
+    .metric = "Metric",
+    .estimator = "Estimator",
+    .estimate = "Estimate"
+  ) %>%
+  text_transform(
+    locations = cells_body(columns = .metric),
+    fn = toupper
+  ) %>%
+  tab_header(
+    title = "Model Performance — Chroma 2 Case Returns",
+    subtitle = "Monthly Log Return Forecast"
+  ) %>%
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(columns = everything())
+  ) %>%
+  tab_style(
+    style = cell_text(weight = "bold"),
+    locations = cells_column_labels(everything())
+  )
+
+```
+
+
+
+
+```{r}
+#| include: false
+
+ggplot(preds_month_ret, aes(x = .pred, y = .pred - return_next_month)) +
+  geom_hline(yintercept = 0, color = "gray70", linetype = "dashed", size = 0.8) +
+  geom_point(aes(color = abs(.pred - return_next_month)), alpha = 0.7, size = 3) +
+  scale_color_gradient(low = "skyblue", high = "firebrick", name = "Absolute Error") +
+  labs(
+    title = "Residuals vs Predictions — Monthly Log Return",
+    subtitle = "Error Between Forecasted and Actual Log Return",
+    x = "Predicted Return",
+    y = "Residual (Predicted - Actual)"
+  ) +
+  theme_minimal(base_size = 14)
+
+```
+
+
+```{r echo=FALSE}
+vol_data <- Daily_CAD_Items %>%
+  filter(Item_Type == "Case") %>%
+  group_by(Item) %>%
+  arrange(date) %>%
+  mutate(
+    volatility_7d = slide_dbl(price_cad, sd, .before = 6, .complete = TRUE),
+    price_lag_1 = lag(price_cad),
+    price_change = price_cad - price_lag_1,
+    date_num = as.numeric(date)
+  ) %>%
+  drop_na(volatility_7d, price_lag_1) %>%
+  ungroup()
+set.seed(456)
+vol_split <- initial_split(vol_data, prop = 0.8)
+vol_train <- training(vol_split)
+vol_test <- testing(vol_split)
+
+vol_recipe <- recipe(volatility_7d ~ price_cad + price_change + volume + date_num, data = vol_train) %>%
+  step_dummy(all_nominal_predictors()) %>%
+  step_normalize(all_numeric_predictors())
+
+
+
+vol_model <- boost_tree(trees = 500, tree_depth = 6) %>%
+  set_engine("xgboost") %>%
+  set_mode("regression")
+
+vol_workflow <- workflow() %>%
+  add_recipe(vol_recipe) %>%
+  add_model(vol_model)
+
+vol_fit <- fit(vol_workflow, data = vol_train)
+
+
+vol_preds <- predict(vol_fit, new_data = vol_test) %>%
+  bind_cols(vol_test)
+
+```
+
+### Volatility Forecast
+
+Our 7-day volatility model performed significantly better than the daily return model, with an R-squared of 0.76 and low error metrics across the board. The strong alignment between predicted and actual volatility suggests that short-term market uncertainty in CS2 cases can be meaningfully forecasted using historical item behavior.
+
+This has practical implications for risk management and timing—allowing investors to anticipate when periods of high or low price fluctuation are likely to occur.
+
+```{r echo=FALSE}
+
+ggplot(vol_preds, aes(x = .pred, y = volatility_7d)) +
+  geom_point(alpha = 0.4, color = "orange") +
+  geom_abline(linetype = "dashed", color = "gray") +
+  labs(
+    title = "Predicted vs. Actual 7-Day Volatility",
+    x = "Predicted Volatility (CAD)",
+    y = "Actual Volatility (CAD)"
+  ) +
+  theme_minimal()
+
+```
+
+```{r}
+#| echo: false
+vol_preds %>%
+  metrics(truth = volatility_7d, estimate = .pred) %>% 
+  gt()%>%
+  fmt_number(columns = .estimate, decimals = 5) %>%
+  cols_label(
+    .metric = "Metric",
+    .estimator = "Estimator",
+    .estimate = "Estimate"
+  ) %>%
+  text_transform(
+    locations = cells_body(columns = .metric),
+    fn = toupper
+  ) %>%
+  tab_header(
+    title = "Volatility Model Performance Metrics",
+    subtitle = "7-Day Volatility Forecast"
+  ) %>%
+  tab_style(
+    style = cell_text(align = "center"),
+    locations = cells_body(columns = everything())
+  ) %>%
+  tab_style(
+    style = cell_text(weight = "bold"),
+    locations = cells_column_labels(everything())
+  )
+
+```
+
+
+```{r echo=FALSE}
+
+steam_forecast_data <- steam_data_march %>%
+  mutate(Year = as.numeric(Year))
+
+player_lm <- lm(`Peak Players` ~ Year, data = steam_forecast_data)
+
+future_years <- data.frame(Year = max(steam_forecast_data$Year) + 1:5)
+
+future_preds <- future_years %>%
+  mutate(`Peak Players` = predict(player_lm, newdata = future_years)) %>%
+  mutate(Type = "Forecast")
+
+historic_players <- steam_forecast_data %>%
+  select(Year, `Peak Players`) %>%
+  mutate(Type = "Historical")
+
+players_combined <- bind_rows(historic_players, future_preds)
+
+players_combined$Type <- as.character(players_combined$Type)
+```
+
+### Player Base Forecast
+
+To support the assumptions underlying our case price forecasts, we modeled peak player counts for CS2 over the years. The relationship between player activity and item demand is well-established in our analysis, as a larger player base contributes to both market liquidity and overall demand for cases and skins.
+
+While we've already discussed the structural reasons for long-term player growth—such as the free-to-play model and strong community engagement—this projection helps quantify that trajectory. Continued growth in active users provides a reinforcing mechanism for our investment thesis, as rising participation sustains both the speculative and practical demand for digital cosmetic assets.
+
+
+```{r echo=FALSE}
+
+plot_ly() %>%
+  add_trace(data = historic_players,
+            x = ~Year, y = ~`Peak Players`,
+            name = "Historical",
+            type = "scatter", mode = "lines+markers",
+            line = list(color = "blue", width = 3),
+            marker = list(size = 6)) %>%
+  add_trace(data = future_preds,
+            x = ~Year, y = ~`Peak Players`,
+            name = "Forecast",
+            type = "scatter", mode = "lines+markers",
+            line = list(color = "red", width = 3, dash = 'dash'),
+            marker = list(size = 6, symbol = "circle-open")) %>%
+  layout(
+    title = list(text = "<b>Forecast of CS2 Peak Players</b>", x = 0),
+    xaxis = list(title = "Year", tickformat = ".0f"),
+    yaxis = list(title = "Average Players"),
+    legend = list(x = 0.05, y = 0.95, bgcolor = "rgba(255,255,255,0.5)")
+  )
+
+```
+
+### Forecasting the Glove Case
+
+Using Meta’s Prophet model, we generated a time series forecast for the price of the Glove Case based on historical price data. The Glove Case has shown consistent long-term appreciation, particularly since 2020, and our model projects that this upward trend is likely to continue.
+
+The forecast line closely tracks recent market behavior and suggests that the Glove Case will maintain steady growth, supported by ongoing scarcity, player base expansion, and sustained interest in glove-type rare drops. While short-term fluctuations are expected, the long-run trajectory supports our broader investment hypothesis: well-established cases with desirable rare items continue to generate positive returns over time.
+
+
+```{r echo=FALSE}
+
+glove_case_df <- Daily_CAD_Items %>%
+  filter(Item == "Glove Case") %>%
+  select(ds = date, y = price_cad) %>%
+  arrange(ds)
+
+
+model <- prophet(glove_case_df,
+  yearly.seasonality = TRUE,
+  weekly.seasonality = TRUE,
+  daily.seasonality = FALSE)
+
+future <- make_future_dataframe(model, periods = 180)
+forecast <- predict(model, future)
+
+plot(model, forecast) +
+  ggtitle("Prophet Forecast for Glove Case Price") +
+  xlab("Date") + ylab("Price (CAD)")
+
+
+
+
+```
+
+
+```{r echo=FALSE}
+
+# Cases vs the Markets
+price_wide <- Daily_CAD_Items %>%
+  filter(Item_Type == "Case") %>%
+  filter(Item %in% c("Chroma 2 Case", "Chroma Case", "Dreams & Nightmares Case", "Gamma Case", "Glove Case")) %>%
+  select(date, Item, price_cad) %>%
+  pivot_wider(names_from = Item, values_from = price_cad) %>%
+  drop_na()  
+
+returns_wide <- price_wide %>%
+  arrange(date) %>%
+  mutate(
+    ret_chroma_2_v2 = log(`Chroma 2 Case` / lag(`Chroma 2 Case`)),
+    ret_chroma   = log(`Chroma Case` / lag(`Chroma Case`)) ,
+    ret_dreams   = log(`Dreams & Nightmares Case` / lag(`Dreams & Nightmares Case`)),
+    ret_gamma    = log(`Gamma Case` / lag(`Gamma Case`)) ,
+    ret_glove    = log(`Glove Case` / lag(`Glove Case`)) 
+  ) %>% 
+  mutate(case_portfolio = (0.2 * ret_chroma_2_v2 +
+                     0.2 * ret_chroma +
+                     0.2 * ret_dreams +
+                     0.2 * ret_gamma +
+                     0.2 * ret_glove)
+         ) 
+
+symbols <- c("GLD", "SPY")  
+
+case_portfolio <- returns_wide %>% 
+  select(date, case_portfolio) %>% 
+  mutate(date = as.Date(date))
+
+commodity_returns <- tq_get(symbols,
+                            from = "2022-01-21",
+                            to = max(returns_wide$date)) %>%
+  group_by(symbol) %>%
+  tq_transmute(
+    select     = adjusted,
+    mutate_fun = periodReturn,
+    period     = "daily",
+    type       = "log",  
+    col_rename = "daily_return"
+  ) %>%
+  ungroup()
+
+commodity_wide <- commodity_returns %>%
+  pivot_wider(names_from = symbol, values_from = daily_return)
+
+
+comparison_df <- case_portfolio %>%
+  left_join(commodity_wide, by = "date") %>%
+  drop_na()  
+
+cumulative_returns <- comparison_df %>%
+  mutate(
+    cum_case = exp(cumsum(case_portfolio)),
+    cum_GLD  = exp(cumsum(GLD)),
+    cum_SPY  = exp(cumsum(SPY))
+  ) %>%
+  select(date, cum_case, cum_GLD, cum_SPY) %>%
+  pivot_longer(-date, names_to = "Asset", values_to = "Cumulative_Return")
+```
+
+### Cases vs. Traditional Markets
+
+To assess the financial performance of CS2 cases in a broader investment context, we compared their cumulative returns against two traditional benchmarks: the SPDR S&P 500 ETF (SPY) and gold (GLD). Each asset was indexed to $1 starting in January 2022 to evaluate relative growth over time.
+
+Over the two-year period, CS2 cases clearly outperformed both SPY and gold. While equities and gold delivered steady, modest returns, the case portfolio experienced more pronounced appreciation—ultimately providing a higher cumulative return than either benchmark by 2025.
+
+This strong performance is especially notable given that CS2 cases are part of a digital gaming ecosystem, not a regulated financial market. Their ability to deliver outsized returns in a relatively short time frame highlights their potential as an alternative asset class—especially for investors willing to accept some illiquidity and volatility in exchange for asymmetric upside.
+
+Part of this growth was accelerated by Valve’s announcement of *Counter-Strike 2* in March 2023, which sparked renewed interest and speculation across the market. However, the sustained outperformance of cases well before and after the CS2 announcement suggests that this trend is not solely hype-driven, but rooted in long-term supply constraints, growing demand, and a maturing virtual economy.
+
+The chart below illustrates this performance, showing how $1 invested in each asset would have grown from 2022 through early 2025.
+
+```{r echo=FALSE}
+plotly::ggplotly(
+  ggplot(cumulative_returns, aes(x = date, y = Cumulative_Return, color = Asset)) +
+    geom_line(linewidth = 1.2) +
+    labs(
+      title = "Cumulative Returns: CS2 Case Portfolio vs. GLD & SPY",
+      subtitle = "Log Return Basis | Since 2022-01-21",
+      x = "Date",
+      y = "Growth of $1",
+      color = "Asset"
+    ) +
+    theme_minimal()
+)
+
+
+```
+
+# Regressions
+
+### Regression Analysis
+
+To evaluate whether the value of a CS2 case is driven by the prices of its potential drops, we ran a multiple linear regression on the Chroma 2 Case. Our hypothesis is that case returns are influenced by the market performance of the items inside. This makes intuitive sense—cases derive their value from what they can potentially yield upon opening.
+
+In the model, we regressed the daily returns of the Chroma 2 Case against three of its most prominent contents: the AWP, M4A1, and USP skins. All three coefficients were statistically significant, with p-values well below 0.001, suggesting strong predictive relationships. Notably, the model yielded an R² of approximately 6%, which, considering that we only used 3 of the potential drops from the case, is meaningful given the small number of inputs and the inherent volatility of digital assets.
+
+One particularly interesting result is the **positive and statistically significant intercept**. This indicates that even when the included skin returns are neutral, the case itself still tends to generate a positive return. This supports the idea that cases are consistently priced above the expected value (EV) of the items inside—what we refer to as the **"gambler's premium."**
+
+The key takeaway is that case prices respond to the economic activity of the items they contain. Rather than investing in individual skins, which may be illiquid or overly volatile, investors can gain broader exposure to market trends by holding cases. Cases act as baskets of virtual assets, tracking the overall momentum of the CS2 cosmetic economy while also benefiting from built-in speculative demand.
+
+Since this pattern held across other cases we examined, we focus our analysis here for clarity. Additional visualizations reinforce the same trend: skin returns are predictive, and case values reflect a blend of item performance and market psychology.
+
+
+```{r}
+#| include: false
+#Chroma Case Regression - Items and Case
+chroma_df$date <- as.Date(chroma_df$date)
+
+chroma_ret_long <- chroma_df %>% 
+  arrange(date, Item) %>% 
+  dplyr::group_by(Item) %>% 
+  dplyr::mutate(return = log(price_cad / dplyr::lag(price_cad))) %>% 
+  na.omit() %>% 
+  transmute(date, Item, return)
+
+chroma_ret <- chroma_ret_long %>% 
+  tidyr::pivot_wider(names_from = Item, values_from = return) %>% 
+  filter(date >= as.Date("2015-07-01")) %>% 
+  na.omit()
+
+colnames(chroma_ret) <- c("date", "AK", "AWP", "case", "Glock")
+
+chroma_ret %>% GGally::ggpairs()
+chroma_ret %>% RTL::chart_pairs()
+
+fit_chroma <- lm(case ~ AK + AWP + Glock, chroma_ret)
+summary(fit_chroma)
+```
+
+
+```{r}
+#| echo: false
+# Chroma 2 Case Regression
+chroma2_df$date <- as.Date(chroma2_df$date)
+
+chroma2_ret_long <- chroma2_df %>% 
+  arrange(date, Item) %>% 
+  dplyr::group_by(Item) %>% 
+  dplyr::mutate(return = log(price_cad / dplyr::lag(price_cad))) %>% 
+  na.omit() %>% 
+  transmute(date, Item, return)
+
+chroma2_ret <- chroma2_ret_long %>% 
+  tidyr::pivot_wider(names_from = Item, values_from = return) %>% 
+  filter(date >= as.Date("2016-01-01")) %>% 
+  na.omit()
+
+colnames(chroma2_ret) <- c("date", "AWP", "case", "M4A1", "USP")
+
+fit_chroma2 <- lm(case ~ AWP + M4A1 + USP, chroma2_ret)
+
+
+```
+
+```{r echo=FALSE}
+tidy_chroma2 <- broom::tidy(fit_chroma2)
+
+tidy_chroma2 %>%
+  select(term, estimate, std.error, statistic, p.value) %>%
+  kable(digits = 4, caption = "Chroma 2 Case Return Regression Results") %>%
+  kable_styling(full_width = F, bootstrap_options = c("striped", "hover"))
+
+```
+
+```{r echo=FALSE}
+
+#| echo: false
+model_stats <- broom::glance(fit_chroma2)
+
+model_stats %>%
+  select(sigma, r.squared, adj.r.squared, statistic, p.value) %>%
+  mutate(
+    sigma = round(sigma, 5),
+    r.squared = round(r.squared, 5),
+    adj.r.squared = round(adj.r.squared, 5),
+    statistic = round(statistic, 2),
+    p.value = format.pval(p.value, digits = 3, eps = .001),
+   
+  ) %>%
+  rename(
+    `Residual Std. Error` = sigma,
+    `R-squared` = r.squared,
+    `Adj. R-squared` = adj.r.squared,
+    `F-statistic` = statistic,
+    `Model p-value` = p.value,
+    
+  ) %>%
+  kable(caption = "Model Summary Statistics: Chroma 2 Case Regression") %>%
+  kable_styling(full_width = F, bootstrap_options = c("striped", "hover"))
+
+
+
+
+```
+
+### Multicollinearity Considerations
+
+Before interpreting the results of our regression, we examined the relationships between our predictor variables to assess the potential impact of multicollinearity. Multicollinearity arises when independent variables in a regression model are highly correlated with one another, which can distort coefficient estimates and reduce the model’s interpretability.
+
+In the context of CS2 cases, some degree of correlation between items is expected. Since the value of a case is largely derived from the expected value (EV) of its contents, the price of one high-tier skin increasing can indirectly raise the price of the case itself. This, in turn, may lead to higher demand and lower availability of other items in the case, causing their prices to rise as well. In effect, a valuable drop may lift the case—and the other items within it—creating natural co-movement.
+
+The correlation matrix below confirms this intuition. While all three items (labeled as AWP, M4A1, and USP) show a statistically significant positive correlation with the case return, there is also moderate correlation between the items themselves—particularly between AWP and USP with an r of 0.550. This suggests some overlap in how these skins respond to broader market forces or case-specific attention.
+
+Although this multicollinearity does not invalidate our results, it does require careful interpretation. The coefficients in our regression should be viewed as reflecting both the individual influence of each item and their shared exposure to case-wide market dynamics.
+
+
+```{r}
+#| echo: false
+chroma2_ret %>% GGally::ggpairs()
+```
+
+
+```{r}
+#| echo: false
+chroma2_ret %>% RTL::chart_pairs()
+```
+
+```{r}
+#| include: false
+# Dreams and Nightmares Case Regression
+dnm_df$date <- as.Date(dnm_df$date)
+
+dnm_ret_long <- dnm_df %>% 
+  arrange(date, Item) %>% 
+  dplyr::group_by(Item) %>% 
+  dplyr::mutate(return = log(price_cad / dplyr::lag(price_cad))) %>% 
+  na.omit() %>% 
+  transmute(date, Item, return)
+
+dnm_ret <- dnm_ret_long %>% 
+  tidyr::pivot_wider(names_from = Item, values_from = return) %>% 
+  filter(date >= as.Date("2022-12-01")) %>% 
+  na.omit()
+
+colnames(dnm_ret) <- c("date", "AK", "case", "MP9", "USP")
+
+fit_dnm <- lm(case ~ AK + MP9 + USP, dnm_ret)
+summary(fit_dnm)
+
+dnm_ret %>% GGally::ggpairs()
+dnm_ret %>% RTL::chart_pairs()
+```
+
+```{r}
+#| include: false
+# Gamma Case Regression
+gamma_df$date <- as.Date(gamma_df$date)
+
+gamma_ret_long <- gamma_df %>% 
+  arrange(date, Item) %>% 
+  dplyr::group_by(Item) %>% 
+  dplyr::mutate(return = log(price_cad / dplyr::lag(price_cad))) %>% 
+  na.omit() %>% 
+  transmute(date, Item, return)
+
+gamma_ret <- gamma_ret_long %>% 
+  tidyr::pivot_wider(names_from = Item, values_from = return) %>% 
+  filter(date >= as.Date("2016-12-01")) %>% 
+  na.omit()
+
+colnames(gamma_ret) <- c("date", "AWP", "case", "Glock", "M4A4")
+
+fit_gamma <- lm(case ~ AWP + Glock + M4A4, gamma_ret)
+summary(fit_gamma)
+
+gamma_ret %>% GGally::ggpairs()
+gamma_ret %>% RTL::chart_pairs()
+```
+
+```{r}
+#| include: false
+#Glove Case Regression
+glove_df$date <- as.Date(glove_df$date)
+
+glove_ret_long <- glove_df %>% 
+  arrange(date, Item) %>% 
+  dplyr::group_by(Item) %>% 
+  dplyr::mutate(return = log(price_cad / dplyr::lag(price_cad))) %>% 
+  na.omit() %>% 
+  transmute(date, Item, return)
+
+glove_ret <- glove_ret_long %>% 
+  tidyr::pivot_wider(names_from = Item, values_from = return) %>% 
+  filter(date >= as.Date("2017-05-01")) %>% 
+  na.omit()
+
+colnames(glove_ret) <- c("date", "case", "M4A4", "P90", "USP")
+
+fit_glove <- lm(case ~ M4A4 + P90 + USP, glove_ret)
+summary(fit_glove)
+
+glove_ret %>% GGally::ggpairs()
+glove_ret %>% RTL::chart_pairs()
+```
+
+### Regression Conclusion
+
+Our regression analysis provides strong evidence that the returns of individual items within a case are meaningful predictors of the return on the case itself. While our models did not include every possible item from each case, we focused on a representative selection of high-visibility skins across different rarities. Despite this limited scope, the results were consistently statistically significant and directionally aligned with our expectations.
+
+These findings support our core hypothesis: case values are systematically influenced by the performance of the items inside. This reinforces the idea that cases can serve as broader indicators of the CS2 skin economy and may offer a more diversified and resilient investment vehicle compared to individual item speculation. 
+
+These relationships also informed the development of our forecasting models and portfolio construction, as they confirm that case prices reflect underlying economic dynamics within the game—making them both predictable and investable.
+
+## Overall Conclusion
+
+Through the lens of financial analysis, our investigation into CS2 weapon cases reveals a compelling and underappreciated asset class within the digital economy. These virtual containers are not merely cosmetic gaming items—they exhibit clear market structure, responsive pricing behavior, and long-term appreciation patterns that mirror traditional financial commodities.
+
+Our regression results demonstrated that case returns are strongly tied to the performance of the items they contain. Meanwhile, forecasting models—despite short-term noise—showed consistent upward trends in case value over time, particularly for legacy cases like the Glove Case. These gains are supported by limited supply, increasingly rare drops, and a consistently growing player base. Just as important, we identified a persistent "gambler’s premium" that keeps cases priced above the expected value of their contents—an effect driven by speculation, scarcity, and collector behavior.
+
+When benchmarked against traditional assets like SPY and gold, select CS2 cases have outperformed since early 2022, suggesting that digital commodities are no longer a fringe concept—they are becoming viable investment vehicles. While risk remains inherent in any speculative market, our results offer a clear takeaway: in the right conditions, CS2 cases can behave like structured, high-growth digital assets. For investors seeking exposure to an emerging and culturally embedded economy, the case for cases is stronger than ever.
+
+
